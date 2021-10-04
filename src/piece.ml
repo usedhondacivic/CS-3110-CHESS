@@ -1,0 +1,1 @@
+type piece =  Pawn | Rook | Bishop | King | Queen | Knight | Empty
