@@ -30,11 +30,11 @@ let game_over_check curr_board =
 let get_moves curr_board =
   failwith "get_moves has not been implemented."
 
-let from_location coord =
+let from_location curr_board coord =
   failwith "from_location has not been implemented."
 
-let get_king color =
+let get_king curr_board color =
   failwith "get_moves has not been implemented."
 
-let get_castle_availability color = 
+let get_castle_availability curr_board color = 
   failwith "get_castle_availability has not been implemented."
