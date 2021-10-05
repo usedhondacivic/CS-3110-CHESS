@@ -1,4 +1,4 @@
-(** *)
+(** [game_state] holds information about the board and the current state of the game. *)
 
 (** [piece] represents possible chess pieces]. *)
 type piece =
@@ -41,15 +41,20 @@ type result =
   | Legal
   | Illegal
 
-(** [game_over_check] checks a board to see if  *)
-val game_over_check : board -> bool
+(** [game_over_check] checks a board to see if any of the win conditions have been satisfied, then returns the color of the winner*)
+val game_over_check : board -> color
 
+(** [from_location] the piece that on the board at the given coordinate *)
 val from_location : board -> board_coord -> (piece * color)
 
+(** [get_king] gives the location of the given colored king on the board *)
 val get_king : board -> color -> board_coord
 
+(** [get_castle_availability] returns a boolean representing if a color is still able to castle*)
 val get_castle_availability : board -> color -> bool
 
+(** [get_board_from_FEN] returns a board representing a FEN string. *)
 val get_board_from_FEN : string -> board
 
+(** [color_to_move] returns the color of the current player. *)
 val color_to_move : color

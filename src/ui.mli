@@ -1,3 +1,4 @@
-val update_board : Game_state.board -> _
+(** Ui handles displaying the board in the terminal *)
 
-val update_clock : Game_state.time -> _
+(** [update_display] updates the display to show a new board *)
+val update_display : Game_state.game_state -> _
