@@ -5,7 +5,7 @@ type color =
   | Black
   | Empty
 
-type board = (Piece.piece * color) list list
+type board
 
 type board_coord = {
   rank : int;
@@ -25,3 +25,9 @@ type result =
   | Illegal
 
 val game_over_check : board -> bool
+
+val from_location : board_coord -> (Piece.piece * color)
+
+val get_king : color -> board_coord
+
+val get_castle_availability : color -> bool
