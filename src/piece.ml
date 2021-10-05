@@ -1,14 +1,4 @@
-(* [type piece] represents possible chess pieces]. *)
-type piece =
-  | Pawn
-  | Rook
-  | Bishop
-  | King
-  | Queen
-  | Knight
-  | Empty
-
-exception UnknownPiece of piece
+exception UnknownPiece of Game_state.piece
 
 (* [type move] represents a possible move [(x;y)]]. *)
 type move = int * int
@@ -36,7 +26,7 @@ type piece_move = {
 
 (* [type moves] represents possible moves of a piece]. *)
 type moves = {
-  p : piece;
+  p : Game_state.piece;
   validmove : move list;
 }
 

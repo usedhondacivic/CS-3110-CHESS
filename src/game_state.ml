@@ -1,3 +1,12 @@
+type piece =
+  | Pawn
+  | Rook
+  | Bishop
+  | King
+  | Queen
+  | Knight
+  | Empty
+
 type time = int * int
 
 type color =
@@ -6,7 +15,7 @@ type color =
   | Empty
 
 type board = {
-  board: (Piece.piece * color) list list;
+  board: (piece * color) list list;
   current_turn : color;
   castle_availability : bool * bool 
 }
@@ -18,8 +27,8 @@ type board_coord = {
 
 type game_state = {
   board : board;
-  white_taken : Piece.piece list;
-  black_taken : Piece.piece list;
+  white_taken : piece list;
+  black_taken : piece list;
   time : time;
 }
 
