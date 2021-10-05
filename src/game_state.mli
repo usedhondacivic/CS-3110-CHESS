@@ -26,8 +26,8 @@ type result =
 
 val game_over_check : board -> bool
 
-val from_location : board_coord -> (Piece.piece * color)
+val from_location : board -> board_coord -> (Piece.piece * color)
 
-val get_king : color -> board_coord
+val get_king : board -> color -> board_coord
 
-val get_castle_availability : color -> bool
+val get_castle_availability : board -> color -> bool
