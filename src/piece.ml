@@ -10,6 +10,17 @@ type piece =
 
 exception UnknownPiece of piece
 
+(* [type move] represents a possible move [(x;y)]]. *)
+type move = int * int
+
+(*[start] is the starting position of the piece as a tuple [(x*y)] *)
+type start = int * int
+
+(*TODO: add starting coordinate from gameplay *)
+
+(* [type brd] represents a list of move [(x;y)]]. *)
+type brd = move list
+
 (* [type direction] represents possible directions of a piece]. *)
 type direction =
   | Vertical
@@ -17,8 +28,8 @@ type direction =
   | Diagonal
   | LShape
 
-(* [type move] represents a possible move]. *)
-type move = {
+(* [type piece_move] represents a possible move]. *)
+type piece_move = {
   length : int;
   directions : direction;
 }
@@ -28,12 +39,6 @@ type moves = {
   p : piece;
   validmove : move list;
 }
-
-type brd = Game_state.board
-
-(*[start] retruns the starting position of the piece as a tuple
-  [(x*y)] *)
-type start = Gameplay.move
 
 let move_vert len dir = failwith "move_vert not implemented"
 
