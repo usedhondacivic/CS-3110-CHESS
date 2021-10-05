@@ -20,7 +20,10 @@ type move
 type brd
 (** The type of the board. *)
 
-val get_moves : piece -> brd -> move list
+type start
+(** The type of the starting position of the board. *)
+
+val get_moves : piece -> brd -> start -> move list
 (** [get_moves] is the list of possible moves of piece[p] at starting
     position [start] on the board [brd]. Raises: [UnknownPiece piece] if
     piece [p] is not a valid piece name in [p]]. *)

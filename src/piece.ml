@@ -29,6 +29,12 @@ type moves = {
   validmove : move list;
 }
 
+type brd = Game_state.board
+
+(*[start] retruns the starting position of the piece as a tuple
+  [(x*y)] *)
+type start = Gameplay.move
+
 let move_vert len dir = failwith "move_vert not implemented"
 
 let move_horiz len dir = failwith "move_horiz not implemented"
@@ -37,7 +43,7 @@ let move_lshape len dir = failwith "move_lshape not implemented"
 
 let move_diag len dir = failwith "move_diag not implemented"
 
-let get_moves p = failwith "get_moves not implemented"
+let get_moves p brd = failwith "get_moves not implemented"
 
 (*evaluates to a position on the board givem a move length [len] and
   direction [dir] *)
