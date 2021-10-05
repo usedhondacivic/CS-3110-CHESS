@@ -5,7 +5,11 @@ type color =
   | Black
   | Empty
 
-type board = (Piece.piece * color) list list
+type board = {
+  board: (Piece.piece * color) list list;
+  current_turn : color;
+  castle_availability : bool * bool 
+}
 
 type board_coord = {
   rank : int;
@@ -14,7 +18,6 @@ type board_coord = {
 
 type game_state = {
   board : board;
-  current_turn : color;
   white_taken : Piece.piece list;
   black_taken : Piece.piece list;
   time : time;
@@ -34,7 +37,12 @@ let from_location curr_board coord =
   failwith "from_location has not been implemented."
 
 let get_king curr_board color =
-  failwith "get_moves has not been implemented."
+  failwith "get_king has not been implemented."
 
 let get_castle_availability curr_board color = 
   failwith "get_castle_availability has not been implemented."
+
+let get_board_from_FEN fen_str =
+  failwith "get_board_from_FEN has not been implemented." 
+let color_to_move =
+  failwith "color_to_move has not been implemented"

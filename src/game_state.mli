@@ -31,3 +31,7 @@ val from_location : board -> board_coord -> (Piece.piece * color)
 val get_king : board -> color -> board_coord
 
 val get_castle_availability : board -> color -> bool
+
+val get_board_from_FEN : string -> board
+
+val color_to_move : color
