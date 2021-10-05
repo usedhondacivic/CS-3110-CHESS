@@ -1,11 +1,6 @@
-type board_coord = {
-  rank : int;
-  file : int
-}
-
-type move = { 
-  start : board_coord; 
-  next : board_coord
+type input_move = { 
+  start : Game_state.board_coord; 
+  next : Game_state.board_coord
 }
 
 (** check if file in range*)

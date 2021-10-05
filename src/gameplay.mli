@@ -1,11 +1,6 @@
-type board_coord = {
-  rank : int;
-  file : int;
-}
-
 type move = {
-  start : board_coord;
-  next : board_coord;
+  start : Game_state.board_coord;
+  next : Game_state.board_coord;
 }
 
 val check : string -> move
