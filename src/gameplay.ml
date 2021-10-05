@@ -17,11 +17,15 @@ let check_file_rank place =
   let file_place = String.sub place 0 1 in 
   let rank_place = String.sub place 1 1 in 
   if check_file file_place && check_rank rank_place
-    then failwith "new input needed"
+    then Game_state.{rank = int_of_string rank_place; file = int_of_string file_place}
     else failwith "new input needed"
 
 let check start_end =
   (** change to return move*)
   let sep = String.split_on_char ' ' start_end in 
   let start_end  = List.filter (fun x -> x <> "") sep in 
-  List.map check_file_rank start_end
+  let moves_list = List.map check_file_rank start_end in 
+    match moves_list with 
+    | [] -> failwith "not meet precondition"
+    | hd::tl::[] -> {start = hd; next = tl}
+    |_::_ -> failwith "not meet precondition"
