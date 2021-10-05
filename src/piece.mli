@@ -1,6 +1,7 @@
 (** Representation of static chess piece data. This module represents
     the possible moves by each chess piece. *)
 
+(** The abstarct type of values representing chess pieces *)
 type piece =
   | Pawn
   | Rook
@@ -8,7 +9,7 @@ type piece =
   | King
   | Queen
   | Knight
-  | Empty  (** The abstarct type of values representing chess pieces *)
+  | Empty
 
 exception UnknownPiece of piece
 (** Raised when an unknown piece is encountered. *)
@@ -16,12 +17,10 @@ exception UnknownPiece of piece
 type move
 (** The type of a move of a chess piece. *)
 
-val get_moves : piece -> move list
-(** [get_moves] is the list of possible moves of piece[p]. Raises:
-    [UnknownPiece piece] if piece [p] is not a valid piece name in
-    [p]]. *)
+type brd
+(** The type of the board. *)
 
-(*TODO: decide if we want to return the move given a length and
-  direction, or if we want to return a list of possible moves for that
-  piece and then check if the input is valid. Leaning towards the
-  first. *)
+val get_moves : piece -> brd -> move list
+(** [get_moves] is the list of possible moves of piece[p] at starting
+    position [start] on the board [brd]. Raises: [UnknownPiece piece] if
+    piece [p] is not a valid piece name in [p]]. *)
