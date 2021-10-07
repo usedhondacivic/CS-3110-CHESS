@@ -1,4 +1,4 @@
 (library
- (name game)
+ (name chess)
  (public_name Chess)
  (libraries ANSITerminal))
