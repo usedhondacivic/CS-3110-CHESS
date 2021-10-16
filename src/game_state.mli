@@ -44,8 +44,10 @@ type result =
 (** [game_over_check] checks a board to see if any of the win conditions have been satisfied, then returns the color of the winner*)
 val game_over_check : board -> color
 
+val set_square : board -> board_coord -> (piece * color) -> board
+
 (** [from_location] the piece that on the board at the given coordinate *)
-val from_location : board -> board_coord -> (piece * color)
+val get_square : board -> board_coord -> (piece * color)
 
 (** [get_king] gives the location of the given colored king on the board *)
 val get_king : board -> color -> board_coord
