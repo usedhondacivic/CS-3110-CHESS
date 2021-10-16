@@ -1,7 +1,9 @@
 open ANSITerminal
 
-let scale_factor = 2
-let square_size = (5 * scale_factor, 5)
+let square_size = (11, 5)
+
+let light_color = on_white
+let dark_color = on_yellow
 
 let rec string_of_length symb length = match length with
   | x when x = 0 -> ""
@@ -15,11 +17,10 @@ let rec draw_square =
     if row > 0 then string_of_length " " (fst square_size) ^ "\n" ^ square_helper (row - 1) else ""
   in
   square_helper (snd square_size)
-
   
 let rec row_helper col offset =
   if col > 0 then 
-    let c = if (col + offset) mod 2 = 1 then on_white else on_black in
+    let c = if (col + offset) mod 2 = 1 then dark_color else light_color in
     let _ = print_string [c] (string_of_length " " (fst square_size)) in
     row_helper (col - 1) offset
 else print_string [on_default] "\n"
