@@ -6,4 +6,6 @@ Code to start gameplay will go here
 
 open ANSITerminal
 
-let _ = print_string [blue; on_green] "\n\n\n\ntest\n\n\n\n"
+open Chess
+
+let _ = Ui.draw_empty
