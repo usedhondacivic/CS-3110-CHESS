@@ -35,3 +35,8 @@ let check start_end =
   | [] -> failwith "not meet precondition"
   | [ hd; tl ] -> { start = hd; next = tl }
   | _ :: _ -> failwith "not meet precondition"
+
+(**getter, encap: don't declare its a record*)
+let get_start start_end =
+  let input_move = check start_end in
+  input_move.start

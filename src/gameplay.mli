@@ -6,3 +6,7 @@ type move = {
 
 val check : string -> move
 (** Checks if inputted move is valid and returns move if valid*)
+
+val get_start : string -> Game_state.board_coord
+(** Returns starting square (board coordinate) of piece that will be
+    moved*)
