@@ -10,3 +10,6 @@ val check : string -> move
 val get_start : string -> Game_state.board_coord
 (** Returns starting square (board coordinate) of piece that will be
     moved*)
+
+val take_move : string -> move
+(** Takes input and checks it*)
