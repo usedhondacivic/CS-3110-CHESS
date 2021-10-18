@@ -5,7 +5,7 @@ type move = {
 
 (** check if file letter A-H*)
 let check_file file_num =
-  if file_num - 65 >= 0 && file_num - 65 < 25 then true else false
+  if file_num - 64 >= 1 && file_num - 64 < 8 then true else false
 
 (** check if rank number in range 1-8*)
 let check_rank rank_num =
@@ -15,10 +15,10 @@ let check_rank rank_num =
 (** checking file and rank in range, returns true if valid and false if
     not*)
 let check_file_rank place =
-  let file_place = int_of_string (String.sub place 0 1) in
+  let file_place = Char.code place.[0] in
   let rank_place = int_of_string (String.sub place 1 1) in
   if check_file file_place && check_rank rank_place then
-    Game_state.{ rank = rank_place; file = file_place }
+    Game_state.{ rank = rank_place; file = file_place - 64 }
   else failwith "new input needed"
 
 (**if input valid constructs type move *)
