@@ -11,11 +11,24 @@ type start = int * int
 (* [type brd] represents a list of move [(x;y)]]. *)
 type brd = move list
 
+type dir = 
+| Up 
+| Down
+| Left
+| Right
+
+let mult_of_dir d = 
+  match d with
+  | Up -> 1
+  | Down -> -1
+  | Left -> 1
+  | Right -> -1
+
 (* [type direction] represents possible directions of a piece]. *)
 type direction =
-  | Vertical
-  | Horizontal
-  | Diagonal
+  | Vert 
+  | Horiz
+  | Diag
   | LShape
 
 (* [type piece_move] represents a possible move]. *)
@@ -30,7 +43,42 @@ type moves = {
   validmove : move list;
 }
 
-let move_vert len dir = failwith "move_vert not implemented"
+
+type pos_move_dir = {
+  xPos : int;
+  xNeg : int;
+  yPos : int;
+  yNeg : int;
+}
+(**[let_range] is the maximum lengh a piece can move in the x and y directions 
+given a start position [start]. 
+Example: [let_range (3;4) = {xPos = 3; xNeg = 5; yPos = 4; yNeg = 4}]*)
+let len_range start =
+  {
+    xPos = fst start;
+    xNeg = 8 - fst start;
+    yPos = snd start;
+    yNeg = 8 - snd start;
+  }
+
+(** [(--)] is a list from i to j. *)
+let rec ( -- ) i j = if i > j then [] else i :: (i + 1 -- j)
+
+(**[move_piece] is the position to which a piece can move given a start
+   position on the board [start] , a direction to move [dir] and a
+   length to move [len]*)
+let move_piece start len dir =
+  match dir with
+  | Vert -> (fst start, snd start + len)
+  | Horiz -> (fst start + len, snd start)
+  | Diag -> (fst start + len, snd start + len)
+  | LShape -> (fst start + 2, snd start + 1)
+(*||(fst start + 1, snd start + 2) *)
+
+let rec vert_moves start lenlist =
+  match lenlist with
+  | [] -> []
+  | h :: t -> [ move_piece start h Vert ] :: vert_moves start t
 
 let move_horiz len dir = failwith "move_horiz not implemented"
 
