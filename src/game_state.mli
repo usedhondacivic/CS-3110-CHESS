@@ -17,6 +17,7 @@ type time = int * int
 type color =
   | White
   | Black
+  | NoPiece
 
 val get_piece_str : piece * color -> string
 

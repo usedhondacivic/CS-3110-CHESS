@@ -20,3 +20,10 @@ let start_state : Game_state.game_state = {
 let _ = Ui.show_start
 
 let _ = Ui.update_display start_state
+
+let rec gameplay_loop s =
+  let _ = (Gameplay.take_move "") in 
+  let _ = Ui.update_display start_state in
+  gameplay_loop s
+
+let _ = gameplay_loop ""
