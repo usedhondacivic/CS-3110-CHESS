@@ -28,7 +28,8 @@ let mult_of_dir d =
 type direction =
   | Vert 
   | Horiz
-  | Diag
+  | LeftDiag
+  | RightDiag
   | LShape
 
 (* [type piece_move] represents a possible move]. *)
@@ -73,7 +74,8 @@ let move_piece start len dir =
   match dir with
   | Vert -> (fst start, snd start + len)
   | Horiz -> (fst start + len, snd start)
-  | Diag -> (fst start + len, snd start + len)
+  | LeftDiag -> (fst start - len, snd start + len)
+  | RightDiag -> (fst start + len, snd start + len)
   | LShape -> (fst start + 2, snd start + 1)
 (*||(fst start + 1, snd start + 2) *)
 
@@ -92,7 +94,7 @@ let move_lshape len dir = failwith "move_lshape not implemented"
 let move_diag len dir = failwith "move_diag not implemented"
 
 let get_moves p s = match p with
-| Game_state.Pawn -> move_piece s 1 Vert :: move_piece s 2 Vert :: move_piece s 1 Diag :: move_piece s (-1) Diag :: []
+| Game_state.Pawn -> move_piece s 1 Vert :: move_piece s 2 Vert :: move_piece s 1 LeftDiag :: move_piece s 1 RightDiag :: []
 | Game_state.Rook -> failwith "not implemented"
 | Game_state.Bishop -> failwith "not implemented"
 | Game_state.King -> failwith "not implemented"
