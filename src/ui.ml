@@ -32,9 +32,6 @@ let rec row_helper col row offset board =
       | White -> white_code
       | Black -> black_code
       in
-      (*let _ = print_string [c] (string_of_length " " ((fst square_size) / 2)) in
-      let _ = print_string [c ; color] (Game_state.get_piece_str piece) in
-      let _ = print_string [c] (string_of_length " " ((fst square_size) / 2)) in*)
       let _ = print_color front back (string_of_length " " ((fst square_size) / 2)) in
       let _ = print_color front back (Game_state.get_piece_str piece) in
       let _ = print_color front back (string_of_length " " ((fst square_size) / 2)) in
@@ -42,11 +39,12 @@ let rec row_helper col row offset board =
     else 
       let _ = print_color 0 back (string_of_length " " (fst square_size)) in
       row_helper (col - 1) row offset board
-  else print_string "\n"
+  else print_string " \n"
 
 let rec square_helper row offset board =
   if row > 0 then
-    let _ = row_helper 8 row offset board in
+    let _ = print_string ("   " ^ (if row = (snd square_size) / 2 + 1 then string_of_int offset else " ") ^ "   ") in
+    let _ = row_helper 8 row offset board in 
     square_helper (row - 1) offset board
 
 let draw_row offset board =
@@ -58,7 +56,12 @@ let rec board_helper row board =
     board_helper (row - 1) board
 
 let update_display (curr_state : Game_state.game_state) = 
-  board_helper 8 curr_state.board
+  let half_spacer = string_of_length " " ((fst square_size) / 2) in
+  let spacer = string_of_length " " ((fst square_size) - 1) in
+  let top_row = "       " ^ half_spacer ^ "A" ^ spacer ^ "B" ^ spacer ^ "C" ^ spacer ^ "D" ^ spacer ^ "E" ^ spacer ^ "F" ^ spacer ^ "G" ^ spacer ^ "H" ^ "\n" in
+  let _ = print_endline top_row in
+  let _ = board_helper 8 curr_state.board in
+  print_string "\n\n"
 
 let show_start =
   let _ = print_endline "CS 3110 presents" in
