@@ -4,7 +4,7 @@
 exception UnknownPiece of Game_state.piece
 (** Raised when an unknown piece is encountered. *)
 
-type move
+type move = int * int
 (** The type of a move of a chess piece. *)
 
 type brd

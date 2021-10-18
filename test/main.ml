@@ -55,9 +55,12 @@ let moves_test
   assert_equal expected_output (Piece.get_moves inp_piece input_pos)
 
 let moves_tests =
-  [ moves_test "Pawn moves with start (4,4)" Game_state.Pawn (4, 4) ]
+  [
+    moves_test "Pawn moves with start (4,4)" Game_state.Pawn (4, 4)
+      [ (4, 5); (4, 6); (5, 5); (3, 5) ];
+  ]
 
-let ui_tests = [ (* TODO: add your tests here *) ]
+let ui_tests = moves_tests
 
 let suite =
   "test suite for Chess"

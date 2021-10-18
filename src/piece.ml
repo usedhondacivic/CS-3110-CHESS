@@ -52,14 +52,15 @@ type pos_move_dir = {
 }
 (**[let_range] is the maximum lengh a piece can move in the x and y directions 
 given a start position [start]. 
-Example: [let_range (3;4) = {xPos = 3; xNeg = 5; yPos = 4; yNeg = 4}]*)
+Example: [let_range (3;4) = {xPos = 5; xNeg = -3; yPos = 4; yNeg = -4}]*)
 let len_range start =
   {
-    xPos = fst start;
-    xNeg = 8 - fst start;
-    yPos = snd start;
-    yNeg = 8 - snd start;
+    xPos = 8 - fst start;
+    xNeg = 0 - fst start;
+    yPos = 8 - snd start;
+    yNeg = 0 - snd start;
   }
+
 
 (** [(--)] is a list from i to j. *)
 let rec ( -- ) i j = if i > j then [] else i :: (i + 1 -- j)
@@ -91,7 +92,7 @@ let move_lshape len dir = failwith "move_lshape not implemented"
 let move_diag len dir = failwith "move_diag not implemented"
 
 let get_moves p s = match p with
-| Game_state.Pawn -> vert_moves s ((--) 0 (fst s)) @ vert_moves s ((--) (fst s) 8)
+| Game_state.Pawn -> move_piece s 1 Vert :: move_piece s 2 Vert :: move_piece s 1 Diag :: move_piece s (-1) Diag :: []
 | Game_state.Rook -> failwith "not implemented"
 | Game_state.Bishop -> failwith "not implemented"
 | Game_state.King -> failwith "not implemented"
