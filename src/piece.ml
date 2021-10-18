@@ -11,9 +11,22 @@ type start = int * int
 (* [type brd] represents a list of move [(x;y)]]. *)
 type brd = move list
 
+type dir = 
+| Up 
+| Down
+| Left
+| Right
+
+let mult_of_dir d = 
+  match d with
+  | Up -> 1
+  | Down -> -1
+  | Left -> 1
+  | Right -> -1
+
 (* [type direction] represents possible directions of a piece]. *)
 type direction =
-  | Vert
+  | Vert 
   | Horiz
   | Diag
   | LShape
