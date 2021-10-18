@@ -14,6 +14,7 @@ type time = int * int
 type color =
   | White
   | Black
+  | NoPiece
 
 let piece_str = [
   ((Pawn, Black), "♟︎"); 
