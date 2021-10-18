@@ -27,11 +27,20 @@ let check start_end =
   let start_end = List.filter (fun x -> x <> "") sep in
   let moves_list = List.map check_file_rank start_end in
   match moves_list with
-  | [] -> failwith "not meet precondition"
+  | [] -> failwith "new input needed"
   | [ hd; tl ] -> { start = hd; next = tl }
-  | _ :: _ -> failwith "not meet precondition"
+  | _ :: _ -> failwith "new input needed"
 
 (**getter, encap: don't declare its a record*)
 let get_start start_end =
   let input_move = check start_end in
   input_move.start
+
+(**Takes input and checks *)
+let rec take_move s =
+  let _ = print_endline "Where would you like to move? (Ex: A4 A6): " in
+  let s = read_line () in
+  try check s
+  with exc ->
+    let _ = print_endline "Wrong input. Try again: " in
+    take_move s
