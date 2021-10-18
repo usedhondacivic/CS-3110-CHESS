@@ -44,6 +44,19 @@ let move_validation_tests = [ (* TODO: add your tests here *) ]
 let piece_tests = [ (* TODO: add your tests here *) ]
 
 (** Construct OUnit tests for Ui*)
+
+(**OUnit test for [get_moves]*)
+let moves_test
+    (name : string)
+    (inp_piece : Game_state.piece)
+    (input_pos : Piece.start)
+    (expected_output : Piece.move list) : test =
+  name >:: fun _ ->
+  assert_equal expected_output (Piece.get_moves inp_piece input_pos)
+
+let moves_tests =
+  [ moves_test "Pawn moves with start (4,4)" Game_state.Pawn (4, 4) ]
+
 let ui_tests = [ (* TODO: add your tests here *) ]
 
 let suite =

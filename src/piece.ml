@@ -64,6 +64,7 @@ let len_range start =
 (** [(--)] is a list from i to j. *)
 let rec ( -- ) i j = if i > j then [] else i :: (i + 1 -- j)
 
+
 (**[move_piece] is the position to which a piece can move given a start
    position on the board [start] , a direction to move [dir] and a
    length to move [len]*)
@@ -75,10 +76,13 @@ let move_piece start len dir =
   | LShape -> (fst start + 2, snd start + 1)
 (*||(fst start + 1, snd start + 2) *)
 
-let rec vert_moves start lenlist =
-  match lenlist with
+
+(**[vert_moves] is the list of vertical positions to which a piece 
+can move starting from position [start] *)
+let rec vert_moves start poslist =
+  match poslist with
   | [] -> []
-  | h :: t -> [ move_piece start h Vert ] :: vert_moves start t
+  | h :: t -> move_piece start h Vert :: vert_moves start t
 
 let move_horiz len dir = failwith "move_horiz not implemented"
 
@@ -86,8 +90,18 @@ let move_lshape len dir = failwith "move_lshape not implemented"
 
 let move_diag len dir = failwith "move_diag not implemented"
 
-let get_moves p brd = failwith "get_moves not implemented"
+let get_moves p s = match p with
+| Game_state.Pawn -> vert_moves s ((--) 0 (fst s)) @ vert_moves s ((--) (fst s) 8)
+| Game_state.Rook -> failwith "not implemented"
+| Game_state.Bishop -> failwith "not implemented"
+| Game_state.King -> failwith "not implemented"
+| Game_state.Queen -> failwith "not implemented"
+| Game_state.Knight-> failwith "not implemented"
+| Game_state.Empty -> failwith "not implemented"
 
 (*evaluates to a position on the board givem a move length [len] and
   direction [dir] *)
 let get_move len dir = failwith "get_move not implemented"
+
+let pawnmoves start =
+  vert_moves start [] 
