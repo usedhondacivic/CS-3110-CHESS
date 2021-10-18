@@ -17,7 +17,8 @@ type time = int * int
 type color =
   | White
   | Black
-  | Empty
+
+val get_piece_str : piece * color -> string
 
 (** [board] is the abstract representation of a chess board. *)
 type board
