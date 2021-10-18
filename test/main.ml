@@ -45,6 +45,12 @@ let piece_tests = [ (* TODO: add your tests here *) ]
 
 (** Construct OUnit tests for Ui*)
 
+let rec print_tup = function a, b -> Printf.sprintf "%i, %i" a b
+
+let rec print_tuple_list = function
+  | [] -> ""
+  | h :: t -> print_tup h ^ print_tuple_list t
+
 (**OUnit test for [get_moves]*)
 let moves_test
     (name : string)
@@ -52,12 +58,14 @@ let moves_test
     (input_pos : Piece.start)
     (expected_output : Piece.move list) : test =
   name >:: fun _ ->
-  assert_equal expected_output (Piece.get_moves inp_piece input_pos)
+  assert_equal expected_output
+    (Piece.get_moves inp_piece input_pos)
+    ~printer:print_tuple_list
 
 let moves_tests =
   [
     moves_test "Pawn moves with start (4,4)" Game_state.Pawn (4, 4)
-      [ (4, 5); (4, 6); (5, 5); (3, 5) ];
+      [ (4, 5); (4, 6); (3, 5); (5, 5) ];
   ]
 
 let ui_tests = moves_tests
