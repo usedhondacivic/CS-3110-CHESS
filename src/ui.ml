@@ -1,6 +1,6 @@
 open ANSITerminal
 
-let square_size = (11, 5)
+let square_size = (7, 3)
 
 let light_color = on_white
 let dark_color = on_yellow
@@ -8,9 +8,6 @@ let dark_color = on_yellow
 let rec string_of_length symb length = match length with
   | x when x = 0 -> ""
   | x -> symb ^ string_of_length symb (length - 1)
-
-let update_display curr_state = 
-  failwith "update_board has not been implemented"
   
 let rec row_helper col row offset board =
   if col > 0 then 
@@ -43,5 +40,5 @@ let rec board_helper row board =
     let _ = draw_row row board in
     board_helper (row - 1) board
 
-let draw_empty = 
-  board_helper 8
+let update_display (curr_state : Game_state.game_state) = 
+  board_helper 8 curr_state.board
