@@ -10,4 +10,4 @@ let friendly_fire aboard start_coard finish_coard =
   aboard.(start_coard.Game_state.rank).(start_coard.Game_state.file)
   == aboard.(finish_coard.Game_state.rank).(finish_coard.Game_state.file)
 
-let attempt_move board start finish = board
+let attempt_move board start finish = failwith "not implemented"
