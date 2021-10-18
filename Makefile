@@ -9,3 +9,6 @@ test:
 
 run:
 	dune exec ./src/main.exe
+	
+utop:
+	OCAMLRUNPARAM=b dune utop src
