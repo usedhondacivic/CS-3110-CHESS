@@ -16,18 +16,18 @@ type color =
   | Black
 
 let piece_str = [
-  ((Pawn, White), "♙"); 
-  ((Knight, White), "♘"); 
-  ((Bishop, White), "♗"); 
-  ((Rook, White), "♖"); 
-  ((Queen, White), "♕"); 
-  ((King, White), "♔");
   ((Pawn, Black), "♟︎"); 
   ((Knight, Black), "♞"); 
   ((Bishop, Black), "♝"); 
   ((Rook, Black), "♜"); 
   ((Queen, Black), "♛"); 
   ((King, Black), "♚");
+  ((Pawn, White), "♟︎"); 
+  ((Knight, White), "♞"); 
+  ((Bishop, White), "♝"); 
+  ((Rook, White), "♜"); 
+  ((Queen, White), "♛"); 
+  ((King, White), "♚");
   ((Empty, White), " ");
   ((Empty, Black), " ");
   ]
