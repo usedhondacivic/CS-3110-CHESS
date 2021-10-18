@@ -7,8 +7,7 @@ open Piece
 open Ui
 
 (** Construct OUnit tests for Game_state*)
-let game_state_tests =
-  failwith "game_state_tests has not been implemented"
+let game_state_tests = [ (* TODO: add your tests here *) ]
 
 (** Construct OUnit tests for Gameplay*)
 let check_test
@@ -30,14 +29,13 @@ let gameplay_tests =
   ]
 
 (** Construct OUnit tests for Move_validation*)
-let move_validation_tests =
-  failwith "move_validation_tests has not been implemented"
+let move_validation_tests = [ (* TODO: add your tests here *) ]
 
 (** Construct OUnit tests for Piece*)
-let piece_tests = failwith "piece_tests has not been implemented"
+let piece_tests = [ (* TODO: add your tests here *) ]
 
 (** Construct OUnit tests for Ui*)
-let ui_tests = failwith "ui_tests has not been implemented"
+let ui_tests = [ (* TODO: add your tests here *) ]
 
 let suite =
   "test suite for Chess"
