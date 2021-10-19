@@ -10,6 +10,8 @@ type piece =
   | Knight
   | Empty
 
+type castle_rights = {king_side : bool; queen_side : bool;}
+
 (** [time] represents the current time of the game's chess clock. White first, then black. *)
 type time = int * int
 
@@ -51,14 +53,16 @@ val set_square : board -> board_coord -> (piece * color) -> board
 (** [from_location] the piece that on the board at the given coordinate *)
 val get_square : board -> board_coord -> (piece * color)
 
+val move_piece : board -> board_coord -> board_coord -> board
+
 (** [get_king] gives the location of the given colored king on the board *)
 val get_king : board -> color -> board_coord
 
 (** [get_castle_availability] returns a boolean representing if a color is still able to castle*)
-val get_castle_availability : board -> color -> bool
+val get_castle_availability : board -> color -> castle_rights
 
 (** [get_board_from_FEN] returns a board representing a FEN string. *)
 val get_board_from_FEN : string -> board
 
 (** [color_to_move] returns the color of the current player. *)
-val color_to_move : color
+val color_to_move : board -> color

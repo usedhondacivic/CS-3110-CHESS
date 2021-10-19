@@ -9,6 +9,11 @@ type piece =
   | Knight
   | Empty
 
+type castle_rights = {
+  king_side : bool;
+  queen_side : bool
+}
+
 type time = int * int
 
 type color =
@@ -43,7 +48,7 @@ type board_coord = {
 type board = {
   game_board: (piece * color) list list;
   current_turn : color;
-  castle_availability : bool * bool;
+  castle_availability : castle_rights * castle_rights;
   en_passant_target : board_coord option;
   (*If a pawn was moved two spaces last move, [en_passant_target] is the square that an opposing pawn could move to in order to take en passant*)
   half_move_count : int;
@@ -71,11 +76,20 @@ let get_moves curr_board =
 
 let get_square (curr_board : board) coord =
   let board = curr_board.game_board in 
-  let rank = List.nth board coord.rank in 
-  List.nth rank coord.file
+  let rank = List.nth board (coord.rank - 1) in 
+  List.nth rank (coord.file - 1)
 
-let set_square (curr_board : board) coord =
-  failwith "set_square had not been implemented."
+let set_square (curr_board : board) coord piece =
+  {
+    curr_board with
+    game_board = List.mapi (fun rank lst -> if rank + 1 = coord.rank then 
+    List.mapi (fun file p -> if file + 1 = coord.file then piece else p) lst else lst) curr_board.game_board
+  }
+
+let move_piece (curr_board : board) start_coord end_coord =
+  let old = get_square curr_board start_coord in
+  let _ = set_square curr_board end_coord old in
+  set_square curr_board start_coord (Empty, White)
 
 let get_king curr_board color =
   failwith "get_king has not been implemented."
@@ -100,29 +114,67 @@ let get_piece str = match str with
 | 'K' -> (King, White)
 | x -> failwith ("Invalid FEN string: " ^ Char.escaped x)
 
+(*Reverse taken from https://stackoverflow.com/questions/7382140/reversing-a-list-in-ocaml-using-fold-left-right*)
+let reverse = List.fold_left ( fun lrev b -> b::lrev) [];;
+
 let rec build_row row lst = match lst with
   | x :: t when int_of_char x >= 49 && int_of_char x <= 56 -> build_row ((Util.build_list ((int_of_char x) - 48) (Empty, White)) @ row) t (*ewwwww*)
   | h :: t -> build_row ((get_piece h) :: row) t
   | [] -> row
 
-(*Reverse taken from https://stackoverflow.com/questions/7382140/reversing-a-list-in-ocaml-using-fold-left-right*)
-let reverse = List.fold_left ( fun lrev b -> b::lrev) [];;
+type split_fen = {
+  position : string;
+  turn : string;
+  castle : string;
+  en_passant : string;
+  full_move : string;
+  half_move : string
+}
+
+let color_from_string = function
+| "w" -> White
+| "b" -> Black
+| _ -> failwith "Invalid FEN string"
+
+let castle_rights_from_string str =
+(
+  {
+    king_side = String.contains str 'K';
+    queen_side = String.contains str 'Q';
+  },
+  {
+    king_side = String.contains str 'k';
+    queen_side = String.contains str 'q';
+  }
+)
+
+let en_passant_from_string str = match Util.explode str with
+| r :: f :: [] -> Some {rank = (int_of_char r) - 96; file = (int_of_char f) - 48}
+| ['-'] -> None
+| _ -> failwith "Illegal FEN string: malformed en_passant target"
 
 let get_board_from_FEN fen_str =
-  let pos_string = match String.split_on_char ' ' fen_str with 
-  | h :: t -> h
-  | [] -> failwith "Invalid FEN string"
+  let split_fen = match String.split_on_char ' ' fen_str with 
+  | p :: t :: c :: e :: f :: h :: [] -> 
+  {
+    position = p;
+    turn = t;
+    castle = c;
+    en_passant = e;
+    full_move = f;
+    half_move = h;
+  }
+  | _ -> failwith "Invalid FEN string"
   in
-  let broken = String.split_on_char '/' pos_string in
+  let broken = String.split_on_char '/' split_fen.position in
   let exploded = List.map Util.explode broken in
   {
     game_board = List.map (build_row []) (reverse exploded);
-    current_turn = White;
-    castle_availability = (true, true);
-    en_passant_target = None;
-    half_move_count = 0;
-    full_move_count = 0;
+    current_turn = color_from_string split_fen.turn;
+    castle_availability = castle_rights_from_string split_fen.castle;
+    en_passant_target = en_passant_from_string split_fen.en_passant;
+    full_move_count = int_of_string split_fen.full_move;
+    half_move_count = int_of_string split_fen.half_move;
   }
   
-let color_to_move =
-  White
+let color_to_move curr_board = curr_board.current_turn
