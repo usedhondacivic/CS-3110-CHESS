@@ -83,6 +83,7 @@ let get_king curr_board color =
 let get_castle_availability curr_board color = match color with
   | White -> let ( x , _ ) = curr_board.castle_availability in x
   | Black ->  let( _ , x ) = curr_board.castle_availability in x
+  | NoPiece -> failwith "Can't get castle availability of NoPiece"
 
 let get_piece str = match str with
 | 'p' -> (Pawn, Black)
