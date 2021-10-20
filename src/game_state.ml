@@ -82,14 +82,17 @@ let get_square (curr_board : board) coord =
 let set_square (curr_board : board) coord piece =
   {
     curr_board with
-    game_board = List.mapi (fun rank lst -> if rank + 1 = coord.rank then 
+    game_board = List.mapi (fun rank lst -> if (rank + 1) = coord.rank then 
     List.mapi (fun file p -> if file + 1 = coord.file then piece else p) lst else lst) curr_board.game_board
   }
 
 let move_piece (curr_board : board) start_coord end_coord =
   let old = get_square curr_board start_coord in
-  let _ = set_square curr_board end_coord old in
-  set_square curr_board start_coord (Empty, White)
+  let new_board =  set_square curr_board end_coord old in
+  set_square new_board start_coord (Empty, White)
+
+let swap_turn (curr_board : board) =
+  {curr_board with current_turn = match curr_board.current_turn with White -> Black | Black -> White | NoPiece -> failwith "Invalid board: current_turn must be White or Black."}
 
 let get_king curr_board color =
   failwith "get_king has not been implemented."
@@ -115,7 +118,7 @@ let get_piece str = match str with
 | x -> failwith ("Invalid FEN string: " ^ Char.escaped x)
 
 (*Reverse taken from https://stackoverflow.com/questions/7382140/reversing-a-list-in-ocaml-using-fold-left-right*)
-let reverse = List.fold_left ( fun lrev b -> b::lrev) [];;
+let reverse lst = List.fold_left ( fun lrev b -> b::lrev) [] lst
 
 let rec build_row row lst = match lst with
   | x :: t when int_of_char x >= 49 && int_of_char x <= 56 -> build_row ((Util.build_list ((int_of_char x) - 48) (Empty, White)) @ row) t (*ewwwww*)
@@ -166,10 +169,11 @@ let get_board_from_FEN fen_str =
   }
   | _ -> failwith "Invalid FEN string"
   in
-  let broken = String.split_on_char '/' split_fen.position in
+  let broken = reverse (String.split_on_char '/' split_fen.position) in
   let exploded = List.map Util.explode broken in
+  let rev = List.map reverse exploded in
   {
-    game_board = List.map (build_row []) (reverse exploded);
+    game_board = List.map (build_row []) (rev);
     current_turn = color_from_string split_fen.turn;
     castle_availability = castle_rights_from_string split_fen.castle;
     en_passant_target = en_passant_from_string split_fen.en_passant;

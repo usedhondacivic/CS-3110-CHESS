@@ -53,7 +53,9 @@ val set_square : board -> board_coord -> (piece * color) -> board
 (** [from_location] the piece that on the board at the given coordinate *)
 val get_square : board -> board_coord -> (piece * color)
 
-val move_piece : board -> board_coord -> board_coord -> board
+val move_piece : board -> board_coord -> board_coord -> board 
+
+val swap_turn : board -> board
 
 (** [get_king] gives the location of the given colored king on the board *)
 val get_king : board -> color -> board_coord

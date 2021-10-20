@@ -27,7 +27,7 @@ let rec row_helper col row offset board =
   if col > 0 then 
     let back = if (col + offset) mod 2 = 1 then dark_color else light_color in
     if row = (snd square_size) / 2 + 1 then
-      let piece = Game_state.get_square board {rank = offset; file = col} in
+      let piece = Game_state.get_square board {rank = offset; file = 9 - col} in
       let front = match snd piece with 
       | White -> white_code
       | Black -> black_code
