@@ -63,7 +63,9 @@ let update_display (curr_state : Game_state.game_state) =
   let top_row = "       " ^ half_spacer ^ "A" ^ spacer ^ "B" ^ spacer ^ "C" ^ spacer ^ "D" ^ spacer ^ "E" ^ spacer ^ "F" ^ spacer ^ "G" ^ spacer ^ "H" ^ "\n" in
   let _ = print_endline top_row in
   let _ = board_helper 8 curr_state.board in
-  print_endline ("\n" ^ top_row)
+  let _ = print_endline ("\n" ^ top_row) in
+  let turn = match Game_state.color_to_move curr_state.board with White -> "White" | Black -> "Black" | NoPiece -> failwith "Invalid player color" in 
+  print_endline (turn ^ " to move!")
 
 let show_start =
   let _ = print_endline "CS 3110 presents" in
