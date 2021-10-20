@@ -4,7 +4,7 @@ Code to start gameplay will go here
 
 open Chess
 
-let start_board = Game_state.get_board_from_FEN  "rnbq4/pppppppp/8/8/8/8/PPPPPPPP/4KBNR w KQkq - 0 1"
+let start_board = Game_state.get_board_from_FEN  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
 let start_state : Game_state.game_state = {
   board = start_board;
