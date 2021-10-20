@@ -5,12 +5,12 @@ type move = {
 
 (** check if file letter A-H*)
 let check_file file_num =
-  if file_num - 64 >= 1 && file_num - 64 < 8 then true else false
+  if file_num - 64 >= 1 && file_num - 64 <= 8 then true else false
 
 (** check if rank number in range 1-8*)
 let check_rank rank_num =
   let rank_num = rank_num in
-  if rank_num >= 1 && rank_num < 8 then true else false
+  if rank_num >= 1 && rank_num <= 8 then true else false
 
 (** checking file and rank in range, returns true if valid and false if
     not*)
