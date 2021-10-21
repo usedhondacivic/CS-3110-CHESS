@@ -97,10 +97,10 @@ let get_moves p s = match p with
 | Game_state.Pawn -> move_piece s 1 Vert :: move_piece s 2 Vert :: move_piece s 1 LeftDiag :: move_piece s 1 RightDiag :: []
 | Game_state.Rook -> failwith "not implemented"
 | Game_state.Bishop -> failwith "not implemented"
-| Game_state.King -> failwith "not implemented"
+| Game_state.King -> move_piece s 1 Vert :: move_piece s (-1) Vert :: move_piece s 1 Horiz :: move_piece s (-1) Horiz :: move_piece s 1 LeftDiag :: move_piece s (-1) LeftDiag :: move_piece s 1 RightDiag :: move_piece s (-1) RightDiag  ::[]
 | Game_state.Queen -> failwith "not implemented"
 | Game_state.Knight-> failwith "not implemented"
-| Game_state.Empty -> failwith "not implemented"
+| Game_state.Empty -> []
 
 (*evaluates to a position on the board givem a move length [len] and
   direction [dir] *)
