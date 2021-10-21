@@ -21,6 +21,7 @@ type color =
   | Black
   | NoPiece
 
+(** [get_piece_str] Returns the string representation of a given piece. Example: (Pawn, White) -> "♟︎"*)
 val get_piece_str : piece * color -> string
 
 (** [board] is the abstract representation of a chess board. *)
@@ -45,20 +46,16 @@ type result =
   | Legal
   | Illegal
 
-(** [game_over_check] checks a board to see if any of the win conditions have been satisfied, then returns the color of the winner*)
-val game_over_check : board -> color
-
 val set_square : board -> board_coord -> (piece * color) -> board
 
 (** [from_location] the piece that on the board at the given coordinate *)
 val get_square : board -> board_coord -> (piece * color)
 
+(** [move_piece] returns a board representing the result of a move *)
 val move_piece : board -> board_coord -> board_coord -> board 
 
+(** [swap_turn] returns a board with the opposite player to move *)
 val swap_turn : board -> board
-
-(** [get_king] gives the location of the given colored king on the board *)
-val get_king : board -> color -> board_coord
 
 (** [get_castle_availability] returns a boolean representing if a color is still able to castle*)
 val get_castle_availability : board -> color -> castle_rights

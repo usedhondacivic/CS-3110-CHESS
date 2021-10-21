@@ -68,12 +68,6 @@ type result =
   | Legal
   | Illegal
 
-let game_over_check curr_board =
-  failwith "attempt_move has not been implemented."
-
-let get_moves curr_board =
-  failwith "get_moves has not been implemented."
-
 let get_square (curr_board : board) coord =
   let board = curr_board.game_board in 
   let rank = List.nth board (coord.rank - 1) in 
