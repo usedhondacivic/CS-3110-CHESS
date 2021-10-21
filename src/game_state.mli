@@ -48,7 +48,7 @@ type result =
 
 val get_time : game_state -> time
 
-val set_time : game_state -> game_state
+val set_time : game_state -> time -> game_state
 
 val set_square : board -> board_coord -> (piece * color) -> board
 
