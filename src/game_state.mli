@@ -46,6 +46,10 @@ type result =
   | Legal
   | Illegal
 
+val get_time : game_state -> time
+
+val set_time : game_state -> game_state
+
 val set_square : board -> board_coord -> (piece * color) -> board
 
 (** [from_location] the piece that on the board at the given coordinate *)
@@ -59,6 +63,9 @@ val swap_turn : board -> board
 
 (** [get_castle_availability] returns a boolean representing if a color is still able to castle*)
 val get_castle_availability : board -> color -> castle_rights
+
+(** [set_castle_availability] returns a board with*)
+val set_castle_availability : board -> color -> castle_rights-> board
 
 (** [get_board_from_FEN] returns a board representing a FEN string. *)
 val get_board_from_FEN : string -> board

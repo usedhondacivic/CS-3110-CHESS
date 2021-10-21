@@ -68,6 +68,10 @@ type result =
   | Legal
   | Illegal
 
+let get_time (curr_state : game_state) = curr_state.time
+
+let set_time (curr_state : game_state) new_time = {curr_state with time = new_time}
+
 let get_square (curr_board : board) coord =
   let board = curr_board.game_board in 
   let rank = List.nth board (coord.rank - 1) in 
@@ -95,6 +99,12 @@ let get_castle_availability curr_board color = match color with
   | White -> let ( x , _ ) = curr_board.castle_availability in x
   | Black ->  let( _ , x ) = curr_board.castle_availability in x
   | NoPiece -> failwith "Can't get castle availability of NoPiece"
+
+let set_castle_availability curr_board color new_rights =
+  match color with
+  | White -> {curr_board with castle_availability = (new_rights, get_castle_availability curr_board Black)}
+  | Black ->  {curr_board with castle_availability = (get_castle_availability curr_board White), new_rights}
+  | NoPiece -> failwith "Can't set castle availability of NoPiece"
 
 let get_piece str = match str with
 | 'p' -> (Pawn, Black)
