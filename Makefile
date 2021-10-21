@@ -14,3 +14,7 @@ run:
 	
 utop:
 	OCAMLRUNPARAM=b dune utop src
+	
+zip:
+	rm -f chess.zip
+	zip -r chess.zip . -x@exclude.lst
