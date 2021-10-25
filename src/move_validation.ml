@@ -86,17 +86,20 @@ let piece_legality board start finish =
   let possible_moves = Piece.get_moves (double_first (get_square board start))  (start.rank,start.file) in
   List.exists (equal_tuple (finish.rank,finish.file)) possible_moves
 
-let move_legality board start finish = (piece_legality board start finish) && (not (friendly_fire board start finish)) && clear_path (pieces_in_between board start finish)
+let move_is_legal board start finish = (piece_legality board start finish) && (not (friendly_fire board start finish)) && clear_path (pieces_in_between board start finish)
+
+(** [attempt_move_no_checks board start finish] creates the board assuming the move is valid*)
+let attempt_move_no_checks board start finish =
+  let the_piece = Game_state.get_square board start in
+  let board_with_piece_removed =
+    Game_state.set_square board start (Empty, NoPiece)
+  in
+  (Game_state.set_square board_with_piece_removed finish the_piece,Legal)
 
 (**[attempt_move board board_coord board_coord] validates all board
    considerations (checks, blocked pieces, castling ect.)
    Returns[board, Legal] if the move is allowed*)
-let attempt_move board start finish = failwith "not implemented"
+let attempt_move board start finish = if move_is_legal board start finish then attempt_move_no_checks board start finish else (board,Illegal)
 
-let attempt_move_no_checks board start finish =
-  let the_piece = Game_state.get_square board start in
-  let board_with_piece_removed =
-    Game_state.set_square board start (Empty, White)
-  in
-  Game_state.set_square board_with_piece_removed finish the_piece
+
 
