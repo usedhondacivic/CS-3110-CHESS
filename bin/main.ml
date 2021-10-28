@@ -15,11 +15,16 @@ let start_state : Game_state.game_state = {
 
 let _ = Ui.show_start
 
+let turn_swap result = match result with
+| (x, Game_state.Legal) -> Game_state.swap_turn x
+| (x, Game_state.Illegal) -> (print_endline "Illegal move, please enter new move."; x)
+
+
 let rec gameplay_loop (state : Game_state.game_state) =
   let _ = Ui.update_display state in
   let move = (Gameplay.take_move "") in
-  let new_board = Game_state.move_piece state.board move.start move.next in
-  let new_board = Game_state.swap_turn new_board in
+  let move_result = Move_validation.attempt_move state.board move.start move.next in
+  let new_board = turn_swap move_result in
   let new_state = {state with board = new_board} in
   gameplay_loop new_state
 
