@@ -69,10 +69,10 @@ let rec ( -- ) i j = if i > j then [] else i :: (i + 1 -- j)
    [let_range (3;4) = {xPos = 5; xNeg = -3; yPos = 4; yNeg = -4}]*)
 let range s =
   {
-    xp = 8 - fst s;
+    xp = 8 - (fst s);
     xn = (fst s) -1;
-    yp = 8 - fst s;
-    yn = (fst s) -1;
+    yp = 8 - (snd s);
+    yn = (snd s) -1;
   
   }
   
@@ -93,16 +93,16 @@ let make_dir_list start =
     xPos = 0 -- (8 - fst start);
     xNeg = 1 - fst start -- 1;
     yPos = 0 -- (8 - snd start);
-    yNeg = 1 - snd start -- 1;
+    yNeg = (1 - snd start) -- 1;
   }
 
-let xpos_list (start : int * int) = 0 -- (8 - fst start)
+let xpos_list (start : int * int) = 1 -- (8 - fst start )
 
-let xneg_list (start : int * int) = 1 - fst start -- 1
+let xneg_list (start : int * int) = (1 - fst start ) -- (-1)
 
-let ypos_list (start : int * int) = 0 -- (8 - snd start)
+let ypos_list (start : int * int) = 1 -- (8 - snd start )
 
-let yneg_list (start : int * int) = 1 - snd start -- 1
+let yneg_list (start : int * int) = (1 - snd start) -- (-1)
 
 (**[move_piece] is the position to which a piece can move given a start
    position on the board [start] , a direction to move [dir] and a
@@ -165,6 +165,11 @@ let move_lshape (s : int * int) list  =
   let listg = if (range s).xp > 1 && (range s).yp > 0 then move_piece s (1) LShapeD :: listf else listf in(**(4,4) to (2,5)*)
   let listh = if (range s).xn > 1 && (range s).yn > 0 then  move_piece s (-1) LShapeD :: listg else listg  in listh (**(4,4) to (6,3)*)
 
+let move_pawn (s: int * int) list=
+  let lista  = if (range s).xp >= 1 && ((range s).yp) >= 1 then (move_piece s 1 RightDiag) :: list else list in (*Diagonal Right (4,4) to (5,5)*)
+  let listb = if ((range s).xn >= 1 && (range s).yp >= 1) then (move_piece s 1 LeftDiag) :: lista else lista in (*Diagonal Left (4,4) to (3,5)*)
+  let listc = if ((range s).yp >= 2) then (move_piece s 2 Vert) :: listb else listb in (*Vertical 2(4,4) to (4,6)*)
+   let listd = if ((range s).yp >= 1) then (move_piece s 1 Vert) :: listc else listc in listd (*Vertical 1 (4,4) to (4,5)*)
 
 let rec diag_move start poslist dir=
   match poslist with
@@ -181,21 +186,20 @@ let rec diag_move start poslist dir=
   | h :: t ->
       move_piece start h DiagQOne :: move_piece start h DiagQTwo  :: move_piece start h DiagQThree :: move_piece start h DiagQFour
       :: diag_moves start t *)
-
 let get_moves p s =
   match p with
-  | Game_state.Pawn ->
-      [
+  | Game_state.Pawn -> move_pawn s []
+      (*[
         move_piece s 1 Vert;
         move_piece s 2 Vert;
         move_piece s 1 LeftDiag;
         move_piece s 1 RightDiag;
-      ]
+      ] *)
   | Game_state.Rook -> (**Moves vertically and horizontally in all lengths*)
     horiz_moves s (xpos_list s)
   @ horiz_moves s (xneg_list s)
   @ vert_moves s (ypos_list s)
-  @ vert_moves s (yneg_list s)
+  @ vert_moves s (yneg_list s) (*back to foront: yneg- ypos - xneg - xpos*)
   | Game_state.Bishop -> (**Moves diagonally in all lengths*) diag_moves s
   | Game_state.King -> (**Moves vertically, horizontally and diagonally by 1*)
       [

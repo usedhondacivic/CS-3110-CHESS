@@ -64,6 +64,7 @@ let moves_test
 
 let moves_tests =
   [
+    (*Pawn Tests*)
     moves_test "Pawn moves with start (4,4) - Center Case"
       Game_state.Pawn (4, 4)
       [ (4, 5); (4, 6); (3, 5); (5, 5) ];
@@ -72,6 +73,49 @@ let moves_tests =
       [ (1, 3); (1, 4); (2, 3) ];
     moves_test "Pawn moves with start (1,7) - Top Case" Game_state.Pawn
       (1, 7) [ (1, 8); (2, 8) ];
+    (*Rook Tests*)
+    moves_test "Rook moves with start (4,4)" Game_state.Rook (4, 4)
+      [
+        (*xpos*)
+        (*good*)
+        (5, 4);
+        (6, 4);
+        (7, 4);
+        (8, 4);
+        (*xneg*)
+        (1, 4);
+        (2, 4);
+        (3, 4);
+        (*ypos*)
+        (*good*)
+        (4, 5);
+        (4, 6);
+        (4, 7);
+        (4, 8);
+        (*yneg*)
+        (4, 1);
+        (4, 2);
+        (4, 3);
+      ];
+    moves_test "Rook moves with start (1,1)" Game_state.Rook (1, 1)
+      [
+        (*xpos*)
+        (2, 1);
+        (3, 1);
+        (4, 1);
+        (5, 1);
+        (6, 1);
+        (7, 1);
+        (8, 1);
+        (*ypos*)
+        (1, 2);
+        (1, 3);
+        (1, 4);
+        (1, 5);
+        (1, 6);
+        (1, 7);
+        (1, 8);
+      ];
   ]
 
 let ui_tests = moves_tests
