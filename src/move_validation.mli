@@ -7,6 +7,3 @@ val attempt_move :
   Game_state.board_coord ->
   Game_state.board * Game_state.result
 
-type result =
-    | Legal
-    | Illegal

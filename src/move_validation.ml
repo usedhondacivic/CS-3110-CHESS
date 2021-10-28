@@ -1,8 +1,5 @@
 open Game_state
 open Piece
-type result =
-  | Legal
-  | Illegal
 
 (**[double_first a] returns the first element of a tuple *)
 let double_first a = match a with x, _ -> x
@@ -86,7 +83,11 @@ let piece_legality board start finish =
   let possible_moves = Piece.get_moves (double_first (get_square board start))  (start.rank,start.file) in
   List.exists (equal_tuple (finish.rank,finish.file)) possible_moves
 
-let move_is_legal board start finish = (piece_legality board start finish) && (not (friendly_fire board start finish)) && clear_path (pieces_in_between board start finish)
+let right_color board start = 
+  let the_piece = Game_state.get_square board start in
+  (double_second the_piece) = Game_state.color_to_move board
+
+let move_is_legal board start finish = (piece_legality board start finish) && (not (friendly_fire board start finish)) && clear_path (pieces_in_between board start finish) && right_color board start
 
 (** [attempt_move_no_checks board start finish] creates the board assuming the move is valid*)
 let attempt_move_no_checks board start finish =
