@@ -123,11 +123,66 @@ let moves_tests =
       [ (1, 2); (2, 1); (2, 2) ];
     (*Empty*)
     moves_test "Empty" Game_state.Empty (1, 1) [];
-    (*BishopTests*)
+    (*Bishop Tests*)
     moves_test "Bishop moves with start (2,2)" Game_state.Bishop (1, 1)
       [ (2, 2); (3, 3); (4, 4); (5, 5); (6, 6); (7, 7); (8, 8) ];
     moves_test "Bishop moves with start (4,4)" Game_state.Bishop (4, 4)
       [
+        (5, 3);
+        (6, 2);
+        (7, 1);
+        (3, 3);
+        (2, 2);
+        (1, 1);
+        (3, 5);
+        (2, 6);
+        (1, 7);
+        (5, 5);
+        (6, 6);
+        (7, 7);
+        (8, 8);
+      ];
+    (*Queen Tests*)
+    moves_test "Queen moves with start (1,1)" Game_state.Queen (1, 1)
+      [
+        (2, 1);
+        (3, 1);
+        (4, 1);
+        (5, 1);
+        (6, 1);
+        (7, 1);
+        (8, 1);
+        (1, 2);
+        (1, 3);
+        (1, 4);
+        (1, 5);
+        (1, 6);
+        (1, 7);
+        (1, 8);
+        (2, 2);
+        (3, 3);
+        (4, 4);
+        (5, 5);
+        (6, 6);
+        (7, 7);
+        (8, 8);
+      ];
+    moves_test "Queen moves with start (4,4)" Game_state.Queen (4, 4)
+      [
+        (5, 4);
+        (6, 4);
+        (7, 4);
+        (8, 4);
+        (1, 4);
+        (2, 4);
+        (3, 4);
+        (4, 5);
+        (4, 6);
+        (4, 7);
+        (4, 8);
+        (4, 1);
+        (4, 2);
+        (4, 3);
         (5, 3);
         (6, 2);
         (7, 1);
