@@ -184,11 +184,15 @@ let move_pawn (s: int * int) list=
 let rec diag_move start poslist dir=
   match poslist with
   | [] -> []
-  | h :: t ->
-      move_piece start h dir
-      :: diag_move start t dir
+  | h  :: t ->
+      if h > 0 then (move_piece start h dir)  
+      :: diag_move start t dir else diag_move start t dir
 
-  let diag_moves s = diag_move s (qI s) DiagQOne @ diag_move s (qII s) DiagQTwo @ diag_move s (qIII s) DiagQThree @ diag_move s (qIIII s) DiagQFour
+  let diag_moves s list = 
+    let lista = if min_quadI s >= 1 then diag_move s (qI s) DiagQOne else list in
+    let listb = if min_quadII s >= 1 then diag_move s (qII s)  DiagQTwo @ lista else lista in
+    let listc = if min_quadIII s >= 1 then diag_move s (qIII s) DiagQThree @ listb else listb in
+    let listd = if min_quadIIII s >= 1 then diag_move s (qIIII s) DiagQFour @ listc else listc in listd
 
 (*let rec diag_moves start poslist =
   match poslist with
@@ -210,7 +214,7 @@ let get_moves p s =
   @ horiz_moves s (xneg_list s)
   @ vert_moves s (ypos_list s)
   @ vert_moves s (yneg_list s) (*back to foront: yneg- ypos - xneg - xpos*)
-  | Game_state.Bishop -> (**Moves diagonally in all lengths*) diag_moves s
+  | Game_state.Bishop -> (**Moves diagonally in all lengths*) diag_moves s []
   | Game_state.King -> (**Moves vertically, horizontally and diagonally by 1*)
      move_king s []
   (*[
@@ -228,7 +232,7 @@ let get_moves p s =
       @ horiz_moves s (xneg_list s)
       @ vert_moves s (ypos_list s)
       @ vert_moves s (yneg_list s)
-      @diag_moves s
+      @diag_moves s []
   | Game_state.Knight -> move_lshape s [] (**Moves in an LShape in all directions*)
   | Game_state.Empty -> []
 

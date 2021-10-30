@@ -121,6 +121,27 @@ let moves_tests =
       [ (4, 3); (4, 5); (3, 4); (5, 4); (3, 5); (5, 5); (3, 3); (5, 3) ];
     moves_test "King moves with start (1,1)" Game_state.King (1, 1)
       [ (1, 2); (2, 1); (2, 2) ];
+    (*Empty*)
+    moves_test "Empty" Game_state.Empty (1, 1) [];
+    (*BishopTests*)
+    moves_test "Bishop moves with start (2,2)" Game_state.Bishop (1, 1)
+      [ (2, 2); (3, 3); (4, 4); (5, 5); (6, 6); (7, 7); (8, 8) ];
+    moves_test "Bishop moves with start (4,4)" Game_state.Bishop (4, 4)
+      [
+        (5, 3);
+        (6, 2);
+        (7, 1);
+        (3, 3);
+        (2, 2);
+        (1, 1);
+        (3, 5);
+        (2, 6);
+        (1, 7);
+        (5, 5);
+        (6, 6);
+        (7, 7);
+        (8, 8);
+      ];
   ]
 
 let ui_tests = moves_tests
