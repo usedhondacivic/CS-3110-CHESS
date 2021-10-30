@@ -171,6 +171,16 @@ let move_pawn (s: int * int) list=
   let listc = if ((range s).yp >= 2) then (move_piece s 2 Vert) :: listb else listb in (*Vertical 2(4,4) to (4,6)*)
    let listd = if ((range s).yp >= 1) then (move_piece s 1 Vert) :: listc else listc in listd (*Vertical 1 (4,4) to (4,5)*)
 
+   let move_king (s : int*int) list =
+    let lista = if (range s).xp>= 1 && (range s).yn >= 1 then (move_piece s 1 DiagQFour) :: list else list in (*DiagQFour*)
+   let listb  = if (range s).xn >= 1 && (range s).yn >=1 then (move_piece s 1 DiagQThree) :: lista else lista in 
+   let listc  = if (range s).xp >= 1 && ((range s).yp) >= 1 then (move_piece s 1 DiagQOne) :: listb else listb in (*Diagonal Right (4,4) to (5,5)*)
+  let listd = if ((range s).xn >= 1 && (range s).yp >= 1) then (move_piece s 1 DiagQTwo) :: listc else listc in (*Diagonal Left (4,4) to (3,5)*)
+  let liste = if ((range s).xp >= 1) then (move_piece s 1 Horiz) :: listd else listd in (*Horizontal (4,4) to (5,4)*)
+  let listf = if ((range s).xn >= 1) then (move_piece s (-1) Horiz) :: liste else liste in (*Horizontal (4,4) to (5,4)*)
+   let listg = if ((range s).yp >= 1) then (move_piece s 1 Vert) :: listf else listf in (*Vertical  (4,4) to (4,5)*)
+   let listh = if ((range s).yn >= 1) then (move_piece s (-1) Vert) :: listg else listg in listh (*Vertical  (4,4) to (4,5)*)
+
 let rec diag_move start poslist dir=
   match poslist with
   | [] -> []
@@ -202,7 +212,8 @@ let get_moves p s =
   @ vert_moves s (yneg_list s) (*back to foront: yneg- ypos - xneg - xpos*)
   | Game_state.Bishop -> (**Moves diagonally in all lengths*) diag_moves s
   | Game_state.King -> (**Moves vertically, horizontally and diagonally by 1*)
-      [
+     move_king s []
+  (*[
         move_piece s 1 Vert;
         move_piece s (-1) Vert;
         move_piece s 1 Horiz;
@@ -211,7 +222,7 @@ let get_moves p s =
         move_piece s (-1) LeftDiag;
         move_piece s 1 RightDiag;
         move_piece s (-1) RightDiag;
-      ]
+      ]*)
   | Game_state.Queen -> (**Moves vertically, horizontally, diagoanlly in all lengths*)
       horiz_moves s (xpos_list s)
       @ horiz_moves s (xneg_list s)

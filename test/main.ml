@@ -116,6 +116,11 @@ let moves_tests =
         (1, 7);
         (1, 8);
       ];
+    (*King Tests*)
+    moves_test "King moves with start (4,4)" Game_state.King (4, 4)
+      [ (4, 3); (4, 5); (3, 4); (5, 4); (3, 5); (5, 5); (3, 3); (5, 3) ];
+    moves_test "King moves with start (1,1)" Game_state.King (1, 1)
+      [ (1, 2); (2, 1); (2, 2) ];
   ]
 
 let ui_tests = moves_tests
