@@ -197,6 +197,11 @@ let moves_tests =
         (7, 7);
         (8, 8);
       ];
+    (*Knight Tests*)
+    moves_test "Kight moves with start (1,1)" Game_state.Knight (1, 1)
+      [ (3, 2); (2, 3) ];
+    moves_test "Knight moves with start (4,4)" Game_state.Knight (4, 4)
+      [ (2, 5); (6, 3); (2, 3); (6, 5); (3, 6); (5, 2); (3, 2); (5, 6) ];
   ]
 
 let ui_tests = moves_tests

@@ -120,7 +120,7 @@ let move_piece start len dir =
   | LShapeA -> (fst start + (1*len), snd start + (2*len))
   | LShapeB -> (fst start + (1*len), snd start + (-2*len))
   | LShapeC -> (fst start + (2*len), snd start + (1*len))
-  | LShapeD -> (fst start + (-2*len), snd start + (1*len))
+  | LShapeD -> (fst start + (2*len), snd start + (-1*len))
 (*||(fst start + 1, snd start + 2) *)
 
 (**Quadrant I and III are odd, quadrant II and IIII are even.*)
@@ -156,14 +156,14 @@ let rec horiz_moves start poslist =
   | h :: t -> move_piece start h Horiz :: horiz_moves start t
 
 let move_lshape (s : int * int) list  = 
-  let lista = if ((range s).xp > 1 && (range s).yp > 0)  then (move_piece s 1 LShapeA) :: list else list in (**(4,4) to (5,6)*)
-  let listb = if ((range s).xn > 1 && (range s).yn > 0)  then (move_piece s (-1) LShapeA) :: lista else lista in (**(4,4) to (3,2)*)
-  let listc = if (range s).xp > 0 && (range s).yn > 1 then move_piece s (1) LShapeB :: listb else listb in (**(4,4) to (5,2)*)
-  let listd = if (range s).xp > 0 && (range s).yp > 1 then move_piece s (-1) LShapeB :: listc else listc in (**(4,4) to (3,6)*)
-  let liste = if (range s).xp > 1 && (range s).yp > 0 then move_piece s (1) LShapeC :: listd else listd in (**(4,4) to (6,5)*)
-  let listf = if (range s).xn > 1 && (range s).yn > 0 then move_piece s (-1) LShapeC :: liste else liste in (**(4,4) to (2,3)*)
-  let listg = if (range s).xp > 1 && (range s).yp > 0 then move_piece s (1) LShapeD :: listf else listf in(**(4,4) to (2,5)*)
-  let listh = if (range s).xn > 1 && (range s).yn > 0 then  move_piece s (-1) LShapeD :: listg else listg  in listh (**(4,4) to (6,3)*)
+  let lista = if ((range s).xp >= 1 && (range s).yp >= 2)  then (move_piece s 1 LShapeA) :: list else list in (**(4,4) to (5,6)*)
+  let listb = if ((range s).xn >= 1 && (range s).yn >= 2)  then (move_piece s (-1) LShapeA) :: lista else lista in (**(4,4) to (3,2)*)
+  let listc = if (range s).xp >= 1 && (range s).yn >= 2 then move_piece s (1) LShapeB :: listb else listb in (**(4,4) to (5,2)*)
+  let listd = if (range s).xn >= 1 && (range s).yp >= 2 then move_piece s (-1) LShapeB :: listc else listc in (**(4,4) to (3,6)*)
+  let liste = if (range s).xp >= 2 && (range s).yp >= 1 then move_piece s (1) LShapeC :: listd else listd in (**(4,4) to (6,5)*)
+  let listf = if (range s).xn >= 1 && (range s).yn >= 2 then move_piece s (-1) LShapeC :: liste else liste in (**(4,4) to (3,2)*)
+  let listg = if (range s).xp >= 2 && (range s).yn >= 1 then move_piece s (1) LShapeD :: listf else listf in (**(4,4) to (6,3)*) 
+  let listh = if (range s).xn >= 2 && (range s).yp >= 1 then  move_piece s (-1) LShapeD :: listg else listg  in listh (**(4,4) to (2,5)*)
 
 let move_pawn (s: int * int) list=
   let lista  = if (range s).xp >= 1 && ((range s).yp) >= 1 then (move_piece s 1 RightDiag) :: list else list in (*Diagonal Right (4,4) to (5,5)*)
