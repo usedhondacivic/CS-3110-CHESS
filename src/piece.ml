@@ -166,10 +166,17 @@ let move_lshape (s : int * int) list  =
   let listh = if (range s).xn >= 2 && (range s).yp >= 1 then  move_piece s (-1) LShapeD :: listg else listg  in listh (**(4,4) to (2,5)*)
 
 let move_pawn (s: int * int) list=
+(*Direction 1 -UP*)
   let lista  = if (range s).xp >= 1 && ((range s).yp) >= 1 then (move_piece s 1 RightDiag) :: list else list in (*Diagonal Right (4,4) to (5,5)*)
   let listb = if ((range s).xn >= 1 && (range s).yp >= 1) then (move_piece s 1 LeftDiag) :: lista else lista in (*Diagonal Left (4,4) to (3,5)*)
   let listc = if ((range s).yp >= 2) then (move_piece s 2 Vert) :: listb else listb in (*Vertical 2(4,4) to (4,6)*)
-   let listd = if ((range s).yp >= 1) then (move_piece s 1 Vert) :: listc else listc in listd (*Vertical 1 (4,4) to (4,5)*)
+   let listd = if ((range s).yp >= 1) then (move_piece s 1 Vert) :: listc else listc in  (*Vertical 1 (4,4) to (4,5)*)
+  (*Direction 2 -DOWN*)
+  let liste  = if (range s).xn >= 1 && ((range s).yn) >= 1 then (move_piece s (-1) RightDiag) :: listd else listd in (*Diagonal Right (4,4) to (3,3)*)
+  let listf = if ((range s).xp >= 1 && (range s).yn >= 1) then (move_piece s (-1) LeftDiag) :: liste else liste in (*Diagonal Left (4,4) to (5,3)*)
+  let listg = if ((range s).yn >= 2) then (move_piece s (-2) Vert) :: listf else listf in (*Vertical 2(4,4) to (4,2)*)
+  let listh = if ((range s).yn >= 1) then (move_piece s (-1) Vert) :: listg else listg in listh  (*Vertical 1 (4,4) to (4,3)*)
+
 
    let move_king (s : int*int) list =
     let lista = if (range s).xp>= 1 && (range s).yn >= 1 then (move_piece s 1 DiagQFour) :: list else list in (*DiagQFour*)

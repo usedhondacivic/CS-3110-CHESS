@@ -67,12 +67,13 @@ let moves_tests =
     (*Pawn Tests*)
     moves_test "Pawn moves with start (4,4) - Center Case"
       Game_state.Pawn (4, 4)
-      [ (4, 5); (4, 6); (3, 5); (5, 5) ];
+      [ (4, 3); (4, 2); (5, 3); (3, 3); (4, 5); (4, 6); (3, 5); (5, 5) ];
     moves_test "Pawn moves with start (1,2) - Edge Case" Game_state.Pawn
       (1, 2)
-      [ (1, 3); (1, 4); (2, 3) ];
+      [ (1, 1); (2, 1); (1, 3); (1, 4); (2, 3) ];
     moves_test "Pawn moves with start (1,7) - Top Case" Game_state.Pawn
-      (1, 7) [ (1, 8); (2, 8) ];
+      (1, 7)
+      [ (1, 6); (1, 5); (2, 6); (1, 8); (2, 8) ];
     (*Rook Tests*)
     moves_test "Rook moves with start (4,4)" Game_state.Rook (4, 4)
       [
