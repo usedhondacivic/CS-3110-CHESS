@@ -95,8 +95,8 @@ let pawn_legality board start finish =
 let piece_legality board start finish = 
   (*et moves_list = get_moves (double_first (get_square board start)) (start.rank,start.finish) in *)
   if  double_first (Game_state.get_square board start) = Pawn then pawn_legality board start finish else
-    let possible_moves = Piece.get_moves (double_first (get_square board start))  (start.rank,start.file) in
-    List.exists (equal_tuple (finish.rank,finish.file)) possible_moves
+    let possible_moves = Piece.get_moves (double_first (get_square board start))  (start.file,start.rank) in
+    List.exists (equal_tuple (finish.file,finish.rank)) possible_moves
 
 let right_color board start = 
   let the_piece = Game_state.get_square board start in
