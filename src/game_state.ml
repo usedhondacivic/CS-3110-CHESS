@@ -122,6 +122,21 @@ let get_piece str = match str with
   | 'K' -> (King, White)
   | x -> failwith ("Invalid FEN string: " ^ Char.escaped x)
 
+  let get_piece_rep p = match p with
+  | (Pawn, Black) -> "p"
+  | (Rook, Black) -> "r"
+  | (Knight, Black) -> "n"
+  | (Bishop, Black) -> "b"
+  | (Queen, Black) -> "q"
+  | (King, Black) -> "k"
+  | (Pawn, White) -> "P"
+  | (Rook, White) -> "R"
+  | (Knight, White) -> "N"
+  | (Bishop, White) -> "B"
+  | (Queen, White) -> "Q"
+  | (King, White) -> "K"
+  | x -> failwith ("Cannot get string of invalid piece")
+
 (*Reverse taken from https://stackoverflow.com/questions/7382140/reversing-a-list-in-ocaml-using-fold-left-right*)
 let reverse lst = List.fold_left ( fun lrev b -> b::lrev) [] lst
 
@@ -187,3 +202,11 @@ let get_board_from_FEN fen_str =
   }
 
 let color_to_move curr_board = curr_board.current_turn
+
+let list_to_string lst = 
+  let str_lst = List.map get_piece_rep lst in
+  List.fold_left ( ^ ) "" str_lst
+
+let board_to_list board = List.map list_to_string board.game_board
+
+let state_to_rep state = failwith "Not yet implemented."
