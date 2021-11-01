@@ -7,9 +7,12 @@ let background col text =
   let open Printf in
     sprintf "\x1B[48;5;%dm%s\x1B[0m" col text
 
-let print_color front back text = let open Printf in 
+let color_string front back text = 
   let b = background back text in 
-  print_string (foreground front b)
+  foreground front b
+
+let print_color front back text = let open Printf in 
+  print_string (color_string front back text)
 
 let square_size = (7, 3)
 
@@ -23,14 +26,43 @@ let time_to_string ((w, b) : Game_state.time) (color : Game_state.color)  =  mat
 
 let reverse lst = List.fold_left ( fun lrev b -> b::lrev) [] lst
 
+let get_taken_string (state : Game_state.game_state) color = 
+  let pieces = match color with
+  | Game_state.White -> state.white_taken
+  | Game_state.Black -> state.black_taken
+  | Game_state.NoPiece -> failwith "Cannot get taken pieces from NoPiece"
+  in
+  let a = List.map (fun a -> (a, color)) pieces in
+  let b = List.map Game_state.get_piece_str a in
+  List.fold_left ( ^ ) "" b
+  
+
 let get_sidebar_row state row =
   let sidebar = 
     "
     Black time remaining:
     " ^ time_to_string (Game_state.get_time state) Game_state.Black ^ "
 
+     " ^ get_taken_string state Game_state.White ^ "
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     " ^ get_taken_string state Game_state.Black ^ "
+
     White time remaining:
     " ^ time_to_string (Game_state.get_time state) Game_state.White ^ "
+
     " in
     let split = reverse (String.split_on_char '\n' sidebar) in
     try List.nth split row with
