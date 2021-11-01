@@ -112,12 +112,12 @@ let attempt_move_no_checks board start finish =
   let board_with_piece_removed =
     Game_state.set_square board start (Empty, NoPiece)
   in
-  (Game_state.set_square board_with_piece_removed finish the_piece,Game_state.Legal)
+  (Game_state.set_square board_with_piece_removed finish the_piece,Game_state.Legal,Game_state.get_square board finish)
 
 (**[attempt_move board board_coord board_coord] validates all board
    considerations (checks, blocked pieces, castling ect.)
    Returns[board, Legal] if the move is allowed*)
-let attempt_move board start finish = if move_is_legal board start finish then attempt_move_no_checks board start finish else (board,Game_state.Illegal)
+let attempt_move board start finish = if move_is_legal board start finish then attempt_move_no_checks board start finish else (board,Game_state.Illegal,(Empty,NoPiece))
 
 (*let attempt_move = attempt_move_no_checks*)
 
