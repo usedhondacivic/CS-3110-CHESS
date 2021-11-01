@@ -9,7 +9,7 @@ let double_second a = match a with _, x -> x
 
 (**[color_eq a b] returns true if two colors are the same *)
 let color_eq a b =
-  (a = Black && b = Black) || (a = White && b = Black)
+  (a = Black && b = Black) || (a = White && b = White)
 
 (**[same_first a b] returns true if the first element of two tuples are the same*)
 let same_first a b = double_first a = double_first b
@@ -75,20 +75,37 @@ let rec clear_path pieces =
 let friendly_fire board start finish =
   let the_piece = Game_state.get_square board start in
   let target_piece = Game_state.get_square board finish in
-  color_eq (double_second the_piece) (double_second target_piece)
+  if (double_first target_piece) = Empty then false else
+    ((double_second the_piece) = Black && (double_second target_piece) = Black) || ((double_second the_piece) = White && (double_second target_piece) = White)
 
+let pawn_legality board start finish =
+  (*white goes up *)
+  if double_second (Game_state.get_square board start) = White && finish.rank<start.rank then false 
+  (*Black goes down *)
+  else if double_second (Game_state.get_square board start) = Black && finish.rank>start.rank then false
+  (*Can only move by two at start*)
+  else if (finish.rank-start.rank = 2 && start.rank != 2)  || (start.rank-finish.rank = 2 && start.rank != 7) then false
+  (*Can only move diagonally if theres a piece there*)
+  else if start.file!=finish.file &&  double_first (Game_state.get_square board finish) = Empty then false
+  (*Can't take pieces moving vertically *)
+  else if start.file=finish.file && double_first (Game_state.get_square board finish) != Empty then false
+  else let possible_moves = Piece.get_moves (double_first (get_square board start))  (start.file,start.rank) in
+    List.exists (equal_tuple (finish.file,finish.rank)) possible_moves
 
 let piece_legality board start finish = 
   (*et moves_list = get_moves (double_first (get_square board start)) (start.rank,start.finish) in *)
-  let possible_moves = Piece.get_moves (double_first (get_square board start))  (start.rank,start.file) in
-  List.exists (equal_tuple (finish.rank,finish.file)) possible_moves
+  if  double_first (Game_state.get_square board start) = Pawn then pawn_legality board start finish else
+    let possible_moves = Piece.get_moves (double_first (get_square board start))  (start.rank,start.file) in
+    List.exists (equal_tuple (finish.rank,finish.file)) possible_moves
 
 let right_color board start = 
   let the_piece = Game_state.get_square board start in
   (double_second the_piece) = Game_state.color_to_move board
 
-let move_is_legal board start finish = (piece_legality board start finish) && (not (friendly_fire board start finish)) && clear_path (pieces_in_between board start finish) && right_color board start
-
+let move_is_legal board start finish = (piece_legality board start finish) && 
+                                       (not (friendly_fire board start finish)) && 
+                                       clear_path (pieces_in_between board start finish) &&
+                                       right_color board start
 (** [attempt_move_no_checks board start finish] creates the board assuming the move is valid*)
 let attempt_move_no_checks board start finish =
   let the_piece = Game_state.get_square board start in
@@ -102,5 +119,5 @@ let attempt_move_no_checks board start finish =
    Returns[board, Legal] if the move is allowed*)
 let attempt_move board start finish = if move_is_legal board start finish then attempt_move_no_checks board start finish else (board,Game_state.Illegal)
 
-
+(*let attempt_move = attempt_move_no_checks*)
 

@@ -36,7 +36,8 @@ let piece_str = [
   ((King, White), "♚");
   ((Empty, White), " ");
   ((Empty, Black), " ");
-  ]
+  ((Empty, NoPiece), " ");
+]
 
 let get_piece_str piece = List.assoc piece piece_str
 
@@ -81,7 +82,7 @@ let set_square (curr_board : board) coord piece =
   {
     curr_board with
     game_board = List.mapi (fun rank lst -> if (rank + 1) = coord.rank then 
-    List.mapi (fun file p -> if file + 1 = coord.file then piece else p) lst else lst) curr_board.game_board
+                               List.mapi (fun file p -> if file + 1 = coord.file then piece else p) lst else lst) curr_board.game_board
   }
 
 let move_piece (curr_board : board) start_coord end_coord =
@@ -107,19 +108,19 @@ let set_castle_availability curr_board color new_rights =
   | NoPiece -> failwith "Can't set castle availability of NoPiece"
 
 let get_piece str = match str with
-| 'p' -> (Pawn, Black)
-| 'r' -> (Rook, Black)
-| 'n' -> (Knight, Black)
-| 'b' -> (Bishop, Black)
-| 'q' -> (Queen, Black)
-| 'k' -> (King, Black)
-| 'P' -> (Pawn, White)
-| 'R' -> (Rook, White)
-| 'N' -> (Knight, White)
-| 'B' -> (Bishop, White)
-| 'Q' -> (Queen, White)
-| 'K' -> (King, White)
-| x -> failwith ("Invalid FEN string: " ^ Char.escaped x)
+  | 'p' -> (Pawn, Black)
+  | 'r' -> (Rook, Black)
+  | 'n' -> (Knight, Black)
+  | 'b' -> (Bishop, Black)
+  | 'q' -> (Queen, Black)
+  | 'k' -> (King, Black)
+  | 'P' -> (Pawn, White)
+  | 'R' -> (Rook, White)
+  | 'N' -> (Knight, White)
+  | 'B' -> (Bishop, White)
+  | 'Q' -> (Queen, White)
+  | 'K' -> (King, White)
+  | x -> failwith ("Invalid FEN string: " ^ Char.escaped x)
 
 (*Reverse taken from https://stackoverflow.com/questions/7382140/reversing-a-list-in-ocaml-using-fold-left-right*)
 let reverse lst = List.fold_left ( fun lrev b -> b::lrev) [] lst
@@ -139,39 +140,39 @@ type split_fen = {
 }
 
 let color_from_string = function
-| "w" -> White
-| "b" -> Black
-| _ -> failwith "Invalid FEN string"
+  | "w" -> White
+  | "b" -> Black
+  | _ -> failwith "Invalid FEN string"
 
 let castle_rights_from_string str =
-(
-  {
-    king_side = String.contains str 'K';
-    queen_side = String.contains str 'Q';
-  },
-  {
-    king_side = String.contains str 'k';
-    queen_side = String.contains str 'q';
-  }
-)
+  (
+    {
+      king_side = String.contains str 'K';
+      queen_side = String.contains str 'Q';
+    },
+    {
+      king_side = String.contains str 'k';
+      queen_side = String.contains str 'q';
+    }
+  )
 
 let en_passant_from_string str = match Util.explode str with
-| r :: f :: [] -> Some {rank = (int_of_char r) - 96; file = (int_of_char f) - 48}
-| ['-'] -> None
-| _ -> failwith "Illegal FEN string: malformed en_passant target"
+  | r :: f :: [] -> Some {rank = (int_of_char r) - 96; file = (int_of_char f) - 48}
+  | ['-'] -> None
+  | _ -> failwith "Illegal FEN string: malformed en_passant target"
 
 let get_board_from_FEN fen_str =
   let split_fen = match String.split_on_char ' ' fen_str with 
-  | p :: t :: c :: e :: f :: h :: [] -> 
-  {
-    position = p;
-    turn = t;
-    castle = c;
-    en_passant = e;
-    full_move = f;
-    half_move = h;
-  }
-  | _ -> failwith "Invalid FEN string"
+    | p :: t :: c :: e :: f :: h :: [] -> 
+      {
+        position = p;
+        turn = t;
+        castle = c;
+        en_passant = e;
+        full_move = f;
+        half_move = h;
+      }
+    | _ -> failwith "Invalid FEN string"
   in
   let broken = reverse (String.split_on_char '/' split_fen.position) in
   let exploded = List.map Util.explode broken in
@@ -184,5 +185,5 @@ let get_board_from_FEN fen_str =
     full_move_count = int_of_string split_fen.full_move;
     half_move_count = int_of_string split_fen.half_move;
   }
-  
+
 let color_to_move curr_board = curr_board.current_turn
