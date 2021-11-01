@@ -5,5 +5,5 @@ val attempt_move :
   Game_state.board ->
   Game_state.board_coord ->
   Game_state.board_coord ->
-  Game_state.board * Game_state.result * Game_state.piece
+  Game_state.board * Game_state.result * (Game_state.piece * Game_state.color)
 
