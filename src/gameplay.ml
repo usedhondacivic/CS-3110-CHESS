@@ -48,15 +48,10 @@ let rec take_move s =
 (**let decr_timer = take time game is running need two times on UI two
    calls call to this function decreases time till player is done (so
    when check finishes in take_move) take in time *)
-let print_time color state =
-  if color = "white" then
-    match Game_state.get_time state with
-    | a, b ->
-        Game_state.set_time state
-          (int_of_float (float_of_int a -. Sys.time ()), b)
-  else if color = "black" then
-    match Game_state.get_time state with
-    | a, b ->
-        Game_state.set_time state
-          (a, int_of_float (float_of_int b -. Sys.time ()))
-  else failwith "does not meet precondition"
+let print_time color state exec_time =
+  match color with
+  | Game_state.White -> (
+      match Game_state.get_time state with a, b -> (a - exec_time, b))
+  | Game_state.Black -> (
+      match Game_state.get_time state with a, b -> (a, b - exec_time))
+  | Game_state.NoPiece -> failwith "not meet procondition"

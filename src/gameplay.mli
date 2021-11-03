@@ -13,3 +13,6 @@ val get_start : string -> Game_state.board_coord
 
 val take_move : string -> move
 (** Takes input and checks it*)
+
+val print_time :
+  Game_state.color -> Game_state.game_state -> int -> Game_state.time
