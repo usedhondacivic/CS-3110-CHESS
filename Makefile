@@ -18,3 +18,7 @@ utop:
 zip:
 	rm -f chess.zip
 	zip -r chess.zip . -x@exclude.lst
+
+loc:
+	ocamlbuild -clean
+	cloc --by-file --include-lang=OCaml .

@@ -72,3 +72,5 @@ val get_board_from_FEN : string -> board
 
 (** [color_to_move] returns the color of the current player. *)
 val color_to_move : board -> color
+
+val board_to_list : board -> string list
