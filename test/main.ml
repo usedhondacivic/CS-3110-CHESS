@@ -25,16 +25,72 @@ let check_test
   name >:: fun _ ->
   assert_equal expected_output (check input) ~printer:print_tuples
 
+let check_error_test (name : string) (input : string) =
+  name >:: fun _ ->
+  assert_raises (Failure "new input needed") (fun () -> check input)
+
 let get_start_test
     (name : string)
     (input : string)
     (expected_output : Game_state.board_coord) : test =
   name >:: fun _ -> assert_equal expected_output (get_start input)
 
+let print_time_test
+    (name : string)
+    (color : color)
+    (state : Game_state.game_state)
+    (time : int)
+    (expected_output : Game_state.time) : test =
+  name >:: fun _ ->
+  assert_equal expected_output (print_time color state time)
+
+let board_example =
+  Game_state.get_board_from_FEN
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
 let gameplay_tests =
   [
-    check_test "'A4 A5' is on board" "A4 A6"
+    check_test "'A4 A6' is on board" "A4 A6"
       { start = { rank = 4; file = 1 }; next = { rank = 6; file = 1 } };
+    check_test "'A4 B8' is on board" "A4 B8"
+      { start = { rank = 4; file = 1 }; next = { rank = 8; file = 2 } };
+    check_error_test "'A4 A9' is not on the board, throws Failure"
+      "A4 A9";
+    check_error_test
+      "throws Failure because J is not a letter on boardd" "A4 J1";
+    check_error_test
+      "throws Failure because 44 is not a number on boardd" "A4 A44";
+    check_error_test
+      "throws Failure because 44 is not a number on boardd" "B66 B7";
+    get_start_test "Start square of" "A4 A6" { rank = 4; file = 1 };
+    get_start_test "Start square of" "C7 B8" { rank = 7; file = 3 };
+    print_time_test
+      "White's turn, started with 300 and takes 10 seconds" White
+      {
+        board = board_example;
+        white_taken = [];
+        black_taken = [];
+        time = (300, 300);
+      }
+      10 (290, 300);
+    print_time_test "Black's turn, starts with 300 and takes 20 seconds"
+      Black
+      {
+        board = board_example;
+        white_taken = [];
+        black_taken = [];
+        time = (300, 300);
+      }
+      20 (300, 280);
+    print_time_test "White's turn, starts with 232 and takes 20 seconds"
+      White
+      {
+        board = board_example;
+        white_taken = [];
+        black_taken = [];
+        time = (232, 230);
+      }
+      20 (212, 230);
   ]
 
 (** Construct OUnit tests for Move_validation*)
