@@ -12,10 +12,12 @@ let check_rank rank_num =
   let rank_num = rank_num in
   if rank_num >= 1 && rank_num <= 8 then true else false
 
+let lower_to_upper dec = if dec >= 97 then dec - 32 else dec
+
 (** checking file and rank in range, returns true if valid and false if
     not*)
 let check_file_rank place =
-  let file_place = Char.code place.[0] in
+  let file_place = lower_to_upper (Char.code place.[0]) in
   let rank_place =
     int_of_string (String.sub place 1 (String.length place - 1))
   in

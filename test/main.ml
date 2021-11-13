@@ -54,6 +54,8 @@ let gameplay_tests =
       { start = { rank = 4; file = 1 }; next = { rank = 6; file = 1 } };
     check_test "'A4 B8' is on board" "A4 B8"
       { start = { rank = 4; file = 1 }; next = { rank = 8; file = 2 } };
+    check_test "'a4 b8' is on board" "a4 b8"
+      { start = { rank = 4; file = 1 }; next = { rank = 8; file = 2 } };
     check_error_test "'A4 A9' is not on the board, throws Failure"
       "A4 A9";
     check_error_test
