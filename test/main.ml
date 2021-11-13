@@ -58,6 +58,10 @@ let gameplay_tests =
       "A4 A9";
     check_error_test
       "throws Failure because J is not a letter on boardd" "A4 J1";
+    check_error_test
+      "throws Failure because 44 is not a number on boardd" "A4 A44";
+    check_error_test
+      "throws Failure because 44 is not a number on boardd" "B66 B7";
     get_start_test "Start square of" "A4 A6" { rank = 4; file = 1 };
     get_start_test "Start square of" "C7 B8" { rank = 7; file = 3 };
     print_time_test

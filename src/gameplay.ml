@@ -16,7 +16,9 @@ let check_rank rank_num =
     not*)
 let check_file_rank place =
   let file_place = Char.code place.[0] in
-  let rank_place = int_of_string (String.sub place 1 1) in
+  let rank_place =
+    int_of_string (String.sub place 1 (String.length place - 1))
+  in
   if check_file file_place && check_rank rank_place then
     Game_state.{ rank = rank_place; file = file_place - 64 }
   else failwith "new input needed"
