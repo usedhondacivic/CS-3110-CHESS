@@ -211,7 +211,7 @@ let show_start =
   in
   let _ = print_endline "\n\nPress enter to begin..." in
   let _ = read_line () in
-  print_endline "Welcome!" [@ocamlformat "disable"]
+  print_endline "Welcome!"
 
 let show_end =
   let _ =
@@ -252,4 +252,54 @@ let show_end =
        \\__\\/         \\__\\/    \n\
       \  \n"
   in
-  print_endline "You loose!" [@ocamlformat "disable"]
+  print_endline "You loose!"
+
+let instructions =
+  let _ =
+    print_color light_color black_code
+      "\n\
+      \  This is a two player game. \n\n\
+      \  Pawn: ♟︎\n\
+      \  1.  On a Pawn’s first move, it can move forward one or two \
+       squares.\n\
+      \  2.  When capturing a piece (see description on back), a Pawn \
+       moves one square diagonally ahead.\n\
+      \  \n\
+      \  Knight: ♞ \n\
+      \  1.  Knights move three squares at a time: two spaces forward \
+       or backward, then one space left or right, or two spaces to the \
+       \t\n\
+      \  left or right, then one space forward or backward. \n\
+      \  2.  The move looks like the letter L. The Knight always ends \
+       up landing on a square opposite the color from which it started.\n\
+      \  \n\
+      \  Bishop: ♝\n\
+      \  1.  Bishops moves diagonally as many open squares as you like. \n\
+      \  2.  The Bishop must remain on the same color square as it \
+       started the game on. \n\
+      \  \n\
+      \  Rook: ♜\n\
+      \  1.  Rook moves in a straight line, horizontally or vertically \
+       as many open squares as you like.\n\
+      \  Besides the Queen, the Rook is the next most powerful Play \
+       Piece\n\
+      \  \n\
+      \  Queen: ♛\n\
+      \  1.  Queen is the most powerful of the Play Pieces. \n\
+      \  2.  The Queen moves in any direction (horizontally, \
+       vertically or diagonally) as many open squares as you like. \n\
+      \  \n\
+      \  King: ♚\n\
+      \  1.  King is the most important Play Piece, because if it \
+       becomes trapped, you’ll lose the game.\n\
+      \  2.  The King moves one square in any direction, as long as it \
+       doesn’t put itself in Check\n\n\
+      \  Check: \n\
+      \  Checkmate:\n\
+      \  Capturing:\n\
+      \  Castling:\n\
+      \  Winning:\n\
+      \  \n\
+      \  "
+  in
+  print_endline "Let's play!"
