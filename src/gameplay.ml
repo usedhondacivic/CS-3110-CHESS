@@ -16,12 +16,13 @@ let check_rank rank_num =
     not*)
 let check_file_rank place =
   let file_place = Char.code place.[0] in
-  let rank_place = int_of_string (String.sub place 1 1) in
+  let rank_place =
+    int_of_string (String.sub place 1 (String.length place - 1))
+  in
   if check_file file_place && check_rank rank_place then
     Game_state.{ rank = rank_place; file = file_place - 64 }
   else failwith "new input needed"
 
-(**if input valid constructs type move *)
 let check start_end =
   let sep = String.split_on_char ' ' start_end in
   let start_end = List.filter (fun x -> x <> "") sep in
@@ -31,12 +32,10 @@ let check start_end =
   | [ hd; tl ] -> { start = hd; next = tl }
   | _ :: _ -> failwith "new input needed"
 
-(**getter*)
 let get_start start_end =
   let input_move = check start_end in
   input_move.start
 
-(**Takes input and checks *)
 let rec take_move s =
   let _ = print_endline "Where would you like to move? (Ex: A4 A6): " in
   let s = read_line () in
@@ -45,9 +44,6 @@ let rec take_move s =
     let _ = print_endline "Wrong input. Try again: " in
     take_move s
 
-(**let decr_timer = take time game is running need two times on UI two
-   calls call to this function decreases time till player is done (so
-   when check finishes in take_move) take in time *)
 let print_time color state exec_time =
   match color with
   | Game_state.White -> (

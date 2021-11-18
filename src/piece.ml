@@ -6,19 +6,8 @@ type move = int * int
 (*[start] is the starting position of the piece as a tuple [(x*y)] *)
 type start = int * int
 
-(*TODO: add starting coordinate from gameplay *)
-
 (* [type brd] represents a list of move [(x;y)]]. *)
 type brd = move list
-
-type dir =
-  | Up
-  | Down
-  | Left
-  | Right
-
-let mult_of_dir d =
-  match d with Up -> 1 | Down -> -1 | Left -> 1 | Right -> -1
 
 (* [type direction] represents possible directions of a piece]. *)
 type direction =
@@ -47,6 +36,9 @@ type moves = {
   validmove : move list;
 }
 
+(** [pos_move_dir] is the list of cells in the positive x direction [xPos], 
+negative x direction [xNeg], positive y direction [yPos], negative y direction
+[yNeg].*)
 type pos_move_dir = {
   xPos : int list;
   xNeg : int list;
@@ -54,6 +46,7 @@ type pos_move_dir = {
   yNeg : int list;
 }
 
+(**[range] is the distance from the four sides of the board. *)
 type range = {
   xp : int;
   xn: int;
@@ -76,26 +69,21 @@ let range s =
   
   }
   
+  (*[qI, qII, qIII, qIIII] are the maximum distance a piece can travel along
+  the diagonal in direction of quadrant 1 [qI], quadrant 2 [qII], 
+  quadrant 3 [qIII] and quadrant 4 [qIIII].*)
   let qI (s: int * int) = ( -- ) 0 (min (range s).xp (range s).yp )
   let qII (s: int * int) = ( -- ) 0 (min (range s).xn (range s).yp )
   let qIII (s: int * int) = ( -- ) 0 (min (range s).xn (range s).yn)
   let qIIII (s: int * int) = ( -- ) 0 (min (range s).xp (range s).yn)
 
 
-(*let len_range start = { xPos = 8 - fst start; xNeg = 0 - fst start;
-  yPos = 8 - snd start; yNeg = 0 - snd start; } *)
 
-(**[make_dir_list] is the list of all positions a piece can move in the
-   x and y directions given a start position [start]. Example:
-   [let make_dir_list (3;4) = {xPos = \[1,2,3,4,5\]; xNeg = \[-1,-2\]; yPos = \[1,2,3,4\]; yNeg = \[-1,-2,-3\]}]*)
-let make_dir_list start =
-  {
-    xPos = 0 -- (8 - fst start);
-    xNeg = 1 - fst start -- 1;
-    yPos = 0 -- (8 - snd start);
-    yNeg = (1 - snd start) -- 1;
-  }
-
+(**[xpos_list], [xneg_list],[ypos_list],[yneg_list]is the list of all positions 
+a piece can move in the positive and negative x and y direction given a start 
+position [start]. 
+Example: [let make_dir_list (3;4) = {xpos_list = \[1,2,3,4,5\]; 
+   xNeg = \[-1,-2\]; yPos = \[1,2,3,4\]; yNeg = \[-1,-2,-3\]}]*)
 let xpos_list (start : int * int) = 1 -- (8 - fst start )
 
 let xneg_list (start : int * int) = (1 - fst start ) -- (-1)
@@ -121,7 +109,6 @@ let move_piece start len dir =
   | LShapeB -> (fst start + (1*len), snd start + (-2*len))
   | LShapeC -> (fst start + (2*len), snd start + (1*len))
   | LShapeD -> (fst start + (2*len), snd start + (-1*len))
-(*||(fst start + 1, snd start + 2) *)
 
 (**Quadrant I and III are odd, quadrant II and IIII are even.*)
 
@@ -129,7 +116,7 @@ let move_piece start len dir =
 let min_quadI s = min
   (List.length (xpos_list s)) (List.length (ypos_list s))
 
-  (**Quadrant II has negative x and positive y*)
+(**Quadrant II has negative x and positive y*)
 let min_quadII s = min
 (List.length (xneg_list s)) (List.length (ypos_list s))
 
@@ -137,7 +124,7 @@ let min_quadII s = min
 let min_quadIII s = min
   (List.length (xneg_list s)) (List.length (yneg_list s))
 
-  (**Quadrant IIII has positive x and negative y*)
+(**Quadrant IIII has positive x and negative y*)
 let min_quadIIII s = min
 (List.length (xpos_list s)) (List.length (yneg_list s))
 
@@ -155,6 +142,8 @@ let rec horiz_moves start poslist =
   | [] -> []
   | h :: t -> move_piece start h Horiz :: horiz_moves start t
 
+  (**[move_l_shape s list] is the list of possible positions a Knight can move 
+  to, give a starting position [s].*)
 let move_lshape (s : int * int) list  = 
   let lista = if ((range s).xp >= 1 && (range s).yp >= 2)  then (move_piece s 1 LShapeA) :: list else list in (**(4,4) to (5,6)*)
   let listb = if ((range s).xn >= 1 && (range s).yn >= 2)  then (move_piece s (-1) LShapeA) :: lista else lista in (**(4,4) to (3,2)*)
@@ -165,6 +154,8 @@ let move_lshape (s : int * int) list  =
   let listg = if (range s).xp >= 2 && (range s).yn >= 1 then move_piece s (1) LShapeD :: listf else listf in (**(4,4) to (6,3)*) 
   let listh = if (range s).xn >= 2 && (range s).yp >= 1 then  move_piece s (-1) LShapeD :: listg else listg  in listh (**(4,4) to (2,5)*)
 
+  (**[move_pawn s list] is the list of possible positions a pawn can move to, 
+  given a starting position [s].*)
 let move_pawn (s: int * int) list=
 (*Direction 1 -UP*)
   let lista  = if (range s).xp >= 1 && ((range s).yp) >= 1 then (move_piece s 1 RightDiag) :: list else list in (*Diagonal Right (4,4) to (5,5)*)
@@ -177,7 +168,8 @@ let move_pawn (s: int * int) list=
   let listg = if ((range s).yn >= 2) then (move_piece s (-2) Vert) :: listf else listf in (*Vertical 2(4,4) to (4,2)*)
   let listh = if ((range s).yn >= 1) then (move_piece s (-1) Vert) :: listg else listg in listh  (*Vertical 1 (4,4) to (4,3)*)
 
-
+(**[move_king s list] is the list of possible positions a pawn can move to, 
+give a starting position [s].*)
    let move_king (s : int*int) list =
     let lista = if (range s).xp>= 1 && (range s).yn >= 1 then (move_piece s 1 DiagQFour) :: list else list in (*DiagQFour*)
    let listb  = if (range s).xn >= 1 && (range s).yn >=1 then (move_piece s 1 DiagQThree) :: lista else lista in 
@@ -188,6 +180,8 @@ let move_pawn (s: int * int) list=
    let listg = if ((range s).yp >= 1) then (move_piece s 1 Vert) :: listf else listf in (*Vertical  (4,4) to (4,5)*)
    let listh = if ((range s).yn >= 1) then (move_piece s (-1) Vert) :: listg else listg in listh (*Vertical  (4,4) to (4,5)*)
 
+ (**[diag_moves start poslist dir] is the list of possible positions a pawn can move to, 
+given a list of accessible diagonal positions [poslist].*) 
 let rec diag_move start poslist dir=
   match poslist with
   | [] -> []
@@ -195,45 +189,27 @@ let rec diag_move start poslist dir=
       if h > 0 then (move_piece start h dir)  
       :: diag_move start t dir else diag_move start t dir
 
+(**[diag_moves s list] is the list of possible diagonal positions in all four 
+quadrant directions qI, qII, qIII, qIV a piece can move to, given a starting 
+position [s].*)  
   let diag_moves s list = 
     let lista = if min_quadI s >= 1 then diag_move s (qI s) DiagQOne else list in
     let listb = if min_quadII s >= 1 then diag_move s (qII s)  DiagQTwo @ lista else lista in
     let listc = if min_quadIII s >= 1 then diag_move s (qIII s) DiagQThree @ listb else listb in
     let listd = if min_quadIIII s >= 1 then diag_move s (qIIII s) DiagQFour @ listc else listc in listd
 
-(*let rec diag_moves start poslist =
-  match poslist with
-  | [] -> []
-  | h :: t ->
-      move_piece start h DiagQOne :: move_piece start h DiagQTwo  :: move_piece start h DiagQThree :: move_piece start h DiagQFour
-      :: diag_moves start t *)
+
 let get_moves p s =
   match p with
   | Game_state.Pawn -> move_pawn s []
-      (*[
-        move_piece s 1 Vert;
-        move_piece s 2 Vert;
-        move_piece s 1 LeftDiag;
-        move_piece s 1 RightDiag;
-      ] *)
   | Game_state.Rook -> (**Moves vertically and horizontally in all lengths*)
     horiz_moves s (xpos_list s)
   @ horiz_moves s (xneg_list s)
   @ vert_moves s (ypos_list s)
   @ vert_moves s (yneg_list s) (*back to foront: yneg- ypos - xneg - xpos*)
-  | Game_state.Bishop -> (**Moves diagonally in all lengths*) diag_moves s []
+  | Game_state.Bishop -> diag_moves s [] (**Moves diagonally in all lengths*) 
   | Game_state.King -> (**Moves vertically, horizontally and diagonally by 1*)
      move_king s []
-  (*[
-        move_piece s 1 Vert;
-        move_piece s (-1) Vert;
-        move_piece s 1 Horiz;
-        move_piece s (-1) Horiz;
-        move_piece s 1 LeftDiag;
-        move_piece s (-1) LeftDiag;
-        move_piece s 1 RightDiag;
-        move_piece s (-1) RightDiag;
-      ]*)
   | Game_state.Queen -> (**Moves vertically, horizontally, diagoanlly in all lengths*)
       horiz_moves s (xpos_list s)
       @ horiz_moves s (xneg_list s)
@@ -243,8 +219,5 @@ let get_moves p s =
   | Game_state.Knight -> move_lshape s [] (**Moves in an LShape in all directions*)
   | Game_state.Empty -> []
 
-(*evaluates to a position on the board givem a move length [len] and
-  direction [dir] *)
-let get_move len dir = failwith "get_move not implemented"
 
-let pawnmoves start = vert_moves start []
+
