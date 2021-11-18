@@ -43,6 +43,8 @@ let check_move curr_fen next_fen move =
     Move_validation.attempt_move curr_board m.start m.next
   in
   ( Game_state.compare_game_board next_board after_move,
+    move,
+    Game_state.board_to_list curr_board,
     Game_state.board_to_list after_move,
     Game_state.board_to_list next_board )
 
@@ -51,20 +53,23 @@ let rec list_to_string b =
 
 let check_move_print out =
   match out with
-  | true, _, _ -> "true"
-  | false, actual, expected ->
+  | true, _, _, _, _ -> "true"
+  | false, move, prev, actual, expected ->
       begin
-        "\nProgram output: \n\n" ^ list_to_string actual
-        ^ "\nExpected output: \n\n" ^ list_to_string expected
+        "\nStart board: \n\n" ^ list_to_string prev
+        ^ "\nMove being made: \n" ^ move ^ "\n\nProgram output: \n\n"
+        ^ list_to_string actual ^ "\nExpected output: \n\n"
+        ^ list_to_string expected
       end
 
 let test printer ?(cmp = ( = )) name expected_val actual_val =
   name >:: fun _ -> assert_equal ~printer ~cmp expected_val actual_val
 
 let check_move_test =
-  test check_move_print ?cmp:(Some (fun (a, _, _) (b, _, _) -> a = b))
+  test check_move_print
+    ?cmp:(Some (fun (a, _, _, _, _) (b, _, _, _, _) -> a = b))
 
-let t_output = (true, [], [])
+let t_output = (true, "", [], [], [])
 
 let moves_to_check =
   [
@@ -72,10 +77,10 @@ let moves_to_check =
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
       "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
       "E2 E4" );
-    ( "Pawn move",
-      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    ( "Bishop move",
       "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
-      "E2 E4" );
+      "rnbqkbnr/pppppppp/8/1B6/4P3/8/PPPP1PPP/RNBQK1NR b KQkq - 0 1",
+      "F1 B5" );
   ]
 
 let generate_move_tests =
