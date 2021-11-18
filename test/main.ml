@@ -35,9 +35,6 @@ let fen_data = read_file "./test/data/game_one_fen.txt"
 
 let pgn_data = read_file "./test/data/game_one_pgn.txt"
 
-let get_move pgn =
-  { start = { rank = 7; file = 7 }; next = { rank = 7; file = 6 } }
-
 let check_move curr_fen next_fen move =
   let m = Gameplay.check move in
   let curr_board = Game_state.get_board_from_FEN curr_fen in
@@ -48,11 +45,6 @@ let check_move curr_fen next_fen move =
   ( Game_state.compare_game_board next_board after_move,
     Game_state.board_to_list after_move,
     Game_state.board_to_list next_board )
-
-let test printer ?(cmp = ( = )) name expected_val actual_val =
-  name >:: fun _ -> assert_equal ~printer ~cmp expected_val actual_val
-
-let bool_test = test string_of_bool
 
 let rec list_to_string b =
   match b with [] -> "" | h :: t -> h ^ "\n" ^ list_to_string t
@@ -65,6 +57,9 @@ let check_move_print out =
         "\nProgram output: \n\n" ^ list_to_string actual
         ^ "\nExpected output: \n\n" ^ list_to_string expected
       end
+
+let test printer ?(cmp = ( = )) name expected_val actual_val =
+  name >:: fun _ -> assert_equal ~printer ~cmp expected_val actual_val
 
 let check_move_test =
   test check_move_print ?cmp:(Some (fun (a, _, _) (b, _, _) -> a = b))
