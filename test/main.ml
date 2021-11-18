@@ -6,38 +6,6 @@ open Move_validation
 open Piece
 open Ui
 
-
-(**Mongo test*)
-(**Tests that our game state agree with real life games played on chess.com when fed the same inputs.*)
-(** http://www.lutanho.net/pgn/pgn2fen.html*)
-let check_board = true
-let check_turn = true
-let check_castle = true
-let check_en_passant_target = true
-let check_half_move = false
-let check_full_move = false
-
-(*https://stackoverflow.com/questions/5774934/how-do-i-read-in-lines-from-a-text-file-in-ocaml*)
-let read_file filename = 
-  let lines = ref [] in
-  let chan = open_in filename in
-  try
-    while true; do
-      lines := input_line chan :: !lines
-    done; !lines
-  with End_of_file ->
-    close_in chan;
-    List.rev !lines ;;
-
-let fen_data = read_file "./test/game_one_fen.txt"
-let pgn_data = read_file "./test/game_one_pgn.txt"
-
-(*let rec pgn_to_moves s = 
-  let exp = Util.explode s in
-  match exp with
-  |
-*)
-
 (**Print tuple for testing *)
 let print_tuples = function
   | {
@@ -47,7 +15,80 @@ let print_tuples = function
       Printf.sprintf "%i, %i, %i, %i;" s_r f_r n_r n_f
 
 (** Construct OUnit tests for Game_state*)
-let game_state_tests = [ (* TODO: add your tests here *) ]
+
+(* http://www.lutanho.net/pgn/pgn2fen.html*)
+
+(*https://stackoverflow.com/questions/5774934/how-do-i-read-in-lines-from-a-text-file-in-ocaml*)
+let read_file filename =
+  let lines = ref [] in
+  let chan = open_in filename in
+  try
+    while true do
+      lines := input_line chan :: !lines
+    done;
+    !lines
+  with End_of_file ->
+    close_in chan;
+    List.rev !lines
+
+let fen_data = read_file "./test/data/game_one_fen.txt"
+
+let pgn_data = read_file "./test/data/game_one_pgn.txt"
+
+let get_move pgn =
+  { start = { rank = 7; file = 7 }; next = { rank = 7; file = 6 } }
+
+let check_move curr_fen next_fen move =
+  let m = Gameplay.check move in
+  let curr_board = Game_state.get_board_from_FEN curr_fen in
+  let next_board = Game_state.get_board_from_FEN next_fen in
+  let after_move, _, _ =
+    Move_validation.attempt_move curr_board m.start m.next
+  in
+  ( Game_state.compare_game_board next_board after_move,
+    Game_state.board_to_list after_move,
+    Game_state.board_to_list next_board )
+
+let test printer ?(cmp = ( = )) name expected_val actual_val =
+  name >:: fun _ -> assert_equal ~printer ~cmp expected_val actual_val
+
+let bool_test = test string_of_bool
+
+let rec list_to_string b =
+  match b with [] -> "" | h :: t -> h ^ "\n" ^ list_to_string t
+
+let check_move_print out =
+  match out with
+  | true, _, _ -> "true"
+  | false, actual, expected ->
+      begin
+        "\nProgram output: \n\n" ^ list_to_string actual
+        ^ "\nExpected output: \n\n" ^ list_to_string expected
+      end
+
+let check_move_test =
+  test check_move_print ?cmp:(Some (fun (a, _, _) (b, _, _) -> a = b))
+
+let t_output = (true, [], [])
+
+let moves_to_check =
+  [
+    ( "Pawn move",
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+      "E2 E4" );
+    ( "Pawn move",
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+      "E2 E4" );
+  ]
+
+let generate_move_tests =
+  moves_to_check
+  |> List.map (fun (n, b, a, m) -> (n, check_move b a m))
+  |> List.map (fun (n, m) -> check_move_test n t_output m)
+
+let game_state_tests = generate_move_tests
 
 (** Construct OUnit tests for Gameplay*)
 let check_test
