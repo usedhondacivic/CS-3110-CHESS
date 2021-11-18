@@ -160,27 +160,34 @@ let get_piece str =
   | 'K' -> (King, White)
   | x -> failwith ("Invalid FEN string: " ^ Char.escaped x)
 
-  let get_piece_rep p = match p with
-  | (Pawn, Black) -> "p"
-  | (Rook, Black) -> "r"
-  | (Knight, Black) -> "n"
-  | (Bishop, Black) -> "b"
-  | (Queen, Black) -> "q"
-  | (King, Black) -> "k"
-  | (Pawn, White) -> "P"
-  | (Rook, White) -> "R"
-  | (Knight, White) -> "N"
-  | (Bishop, White) -> "B"
-  | (Queen, White) -> "Q"
-  | (King, White) -> "K"
-  | x -> failwith ("Cannot get string of invalid piece")
+let get_piece_rep p =
+  match p with
+  | Pawn, Black -> "p"
+  | Rook, Black -> "r"
+  | Knight, Black -> "n"
+  | Bishop, Black -> "b"
+  | Queen, Black -> "q"
+  | King, Black -> "k"
+  | Pawn, White -> "P"
+  | Rook, White -> "R"
+  | Knight, White -> "N"
+  | Bishop, White -> "B"
+  | Queen, White -> "Q"
+  | King, White -> "K"
+  | x -> failwith "Cannot get string of invalid piece"
 
-(*Reverse taken from https://stackoverflow.com/questions/7382140/reversing-a-list-in-ocaml-using-fold-left-right*)
-let reverse lst = List.fold_left ( fun lrev b -> b::lrev) [] lst
+(*Reverse taken from
+  https://stackoverflow.com/questions/7382140/reversing-a-list-in-ocaml-using-fold-left-right*)
+let reverse lst = List.fold_left (fun lrev b -> b :: lrev) [] lst
 
-let rec build_row row lst = match lst with
-  | x :: t when int_of_char x >= 49 && int_of_char x <= 56 -> build_row ((Util.build_list ((int_of_char x) - 48) (Empty, White)) @ row) t (*ewwwww*)
-  | h :: t -> build_row ((get_piece h) :: row) t
+let rec build_row row lst =
+  match lst with
+  | x :: t when int_of_char x >= 49 && int_of_char x <= 56 ->
+      build_row
+        (Util.build_list (int_of_char x - 48) (Empty, White) @ row)
+        t
+      (*ewwwww*)
+  | h :: t -> build_row (get_piece h :: row) t
   | [] -> row
 
 type split_fen = {
@@ -242,7 +249,7 @@ let get_board_from_FEN fen_str =
 
 let color_to_move curr_board = curr_board.current_turn
 
-let list_to_string lst = 
+let list_to_string lst =
   let str_lst = List.map get_piece_rep lst in
   List.fold_left ( ^ ) "" str_lst
 
