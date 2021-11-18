@@ -6,6 +6,38 @@ open Move_validation
 open Piece
 open Ui
 
+
+(**Mongo test*)
+(**Tests that our game state agree with real life games played on chess.com when fed the same inputs.*)
+(** http://www.lutanho.net/pgn/pgn2fen.html*)
+let check_board = true
+let check_turn = true
+let check_castle = true
+let check_en_passant_target = true
+let check_half_move = false
+let check_full_move = false
+
+(*https://stackoverflow.com/questions/5774934/how-do-i-read-in-lines-from-a-text-file-in-ocaml*)
+let read_file filename = 
+  let lines = ref [] in
+  let chan = open_in filename in
+  try
+    while true; do
+      lines := input_line chan :: !lines
+    done; !lines
+  with End_of_file ->
+    close_in chan;
+    List.rev !lines ;;
+
+let fen_data = read_file "./test/game_one_fen.txt"
+let pgn_data = read_file "./test/game_one_pgn.txt"
+
+(*let rec pgn_to_moves s = 
+  let exp = Util.explode s in
+  match exp with
+  |
+*)
+
 (**Print tuple for testing *)
 let print_tuples = function
   | {
