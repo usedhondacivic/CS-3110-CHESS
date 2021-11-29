@@ -15,8 +15,6 @@ let start_state : Game_state.game_state =
     time = (300, 300);
   }
 
-let _ = Ui.show_start
-
 let turn_swap result =
   match result with
   | x, Game_state.Legal, p -> (Game_state.swap_turn x, p)
@@ -62,5 +60,7 @@ let rec gameplay_loop (state : Game_state.game_state) =
   let taken_piece = snd result in
   let new_state = update_state state new_board taken_piece in
   gameplay_loop (Game_state.set_time new_state new_time)
+
+let _ = Ui.show_start
 
 let _ = gameplay_loop start_state

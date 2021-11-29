@@ -174,6 +174,7 @@ let get_piece_rep p =
   | Bishop, White -> "B"
   | Queen, White -> "Q"
   | King, White -> "K"
+  | Empty, NoPiece | Empty, White | Empty, Black -> " "
   | x -> failwith "Cannot get string of invalid piece"
 
 (*Reverse taken from
@@ -253,6 +254,7 @@ let list_to_string lst =
   let str_lst = List.map get_piece_rep lst in
   List.fold_left ( ^ ) "" str_lst
 
-let board_to_list board = List.map list_to_string board.game_board
+let board_to_list board =
+  reverse (List.map list_to_string board.game_board)
 
-let state_to_rep state = failwith "Not yet implemented."
+let compare_game_board one two = board_to_list one = board_to_list two

@@ -67,11 +67,11 @@ let rec string_of_length symb length =
   | x -> symb ^ string_of_length symb (length - 1)
 
 let rec row_helper col row offset board =
-  if col > 0 then
+  if col > 0 then (
     let back =
       if (col + offset) mod 2 = 1 then dark_color else light_color
     in
-    if row = (snd square_size / 2) + 1 then
+    if row = (snd square_size / 2) + 1 then (
       let piece =
         Game_state.get_square board { rank = offset; file = 9 - col }
       in
@@ -85,41 +85,36 @@ let rec row_helper col row offset board =
         print_color front back
           (string_of_length " " (fst square_size / 2))
       in
-      let _ = print_color front back (Game_state.get_piece_str piece) in
-      let _ =
-        print_color front back
-          (string_of_length " " (fst square_size / 2))
-      in
-      row_helper (col - 1) row offset board
-    else
-      let _ =
-        print_color 0 back (string_of_length " " (fst square_size))
-      in
-      row_helper (col - 1) row offset board
+      print_color front back (Game_state.get_piece_str piece);
+      print_color front back
+        (string_of_length " " (fst square_size / 2));
+      row_helper (col - 1) row offset board)
+    else print_color 0 back (string_of_length " " (fst square_size));
+    row_helper (col - 1) row offset board)
 
 let rec square_helper row offset (state : Game_state.game_state) =
   let board = state.board in
-  if row > 0 then
+  if row > 0 then (
     let row_disp =
       "   "
       ^ (if row = (snd square_size / 2) + 1 then string_of_int offset
         else " ")
       ^ "   "
     in
-    let _ = print_string row_disp in
-    let _ = row_helper 8 row offset board in
+    print_string row_disp;
+    row_helper 8 row offset board;
     let sidebar =
       get_sidebar_row state (((offset - 1) * snd square_size) + row)
     in
-    let _ = print_string (row_disp ^ sidebar ^ "\n") in
-    square_helper (row - 1) offset state
+    print_string (row_disp ^ sidebar ^ "\n");
+    square_helper (row - 1) offset state)
 
 let draw_row offset state = square_helper (snd square_size) offset state
 
 let rec board_helper row state =
-  if row > 0 then
-    let _ = draw_row row state in
-    board_helper (row - 1) state
+  if row > 0 then draw_row row state;
+  board_helper (row - 1) state;
+  ()
 
 let update_display (curr_state : Game_state.game_state) =
   let half_spacer = string_of_length " " (fst square_size / 2) in
@@ -129,9 +124,9 @@ let update_display (curr_state : Game_state.game_state) =
     ^ "D" ^ spacer ^ "E" ^ spacer ^ "F" ^ spacer ^ "G" ^ spacer ^ "H"
     ^ "\n"
   in
-  let _ = print_endline top_row in
-  let _ = board_helper 8 curr_state in
-  let _ = print_endline ("\n" ^ top_row) in
+  print_endline top_row;
+  board_helper 8 curr_state;
+  print_endline ("\n" ^ top_row);
   let turn =
     match Game_state.color_to_move curr_state.board with
     | White -> "White"
@@ -141,115 +136,160 @@ let update_display (curr_state : Game_state.game_state) =
   print_endline (turn ^ " to move!")
 
 let show_start =
-  let _ = print_endline "CS 3110 presents" in
-  let _ =
-    print_color light_color black_code
-      "\n\
-      \          _____                    _____                    \
-       _____                    _____                    \
-       _____          \n\
-      \         /\\    \\                  /\\    \\                  \
-       /\\    \\                  /\\    \\                  /\\    \
-       \\         \n\
-      \        /::\\    \\                /::\\____\\                \
-       /::\\    \\                /::\\    \\                /::\\    \
-       \\        \n\
-      \       /::::\\    \\              /:::/    /               \
-       /::::\\    \\              /::::\\    \\              \
-       /::::\\    \\       \n\
-      \      /::::::\\    \\            /:::/    /               \
-       /::::::\\    \\            /::::::\\    \\            \
-       /::::::\\    \\      \n\
-      \     /:::/\\:::\\    \\          /:::/    /               \
-       /:::/\\:::\\    \\          /:::/\\:::\\    \\          \
-       /:::/\\:::\\    \\     \n\
-      \    /:::/  \\:::\\    \\        /:::/____/               \
-       /:::/__\\:::\\    \\        /:::/__\\:::\\    \\        \
-       /:::/__\\:::\\    \\    \n\
-      \   /:::/    \\:::\\    \\      /::::\\    \\              \
-       /::::\\   \\:::\\    \\       \\:::\\   \\:::\\    \\       \
-       \\:::\\   \\:::\\    \\   \n\
-      \  /:::/    / \\:::\\    \\    /::::::\\    \\   _____    \
-       /::::::\\   \\:::\\    \\    ___\\:::\\   \\:::\\    \\    \
-       ___\\:::\\   \\:::\\    \\  \n\
-      \ /:::/    /   \\:::\\    \\  /:::/\\:::\\    \\ /\\    \\  \
-       /:::/\\:::\\   \\:::\\    \\  /\\   \\:::\\   \\:::\\    \\  \
-       /\\   \\:::\\   \\:::\\    \\ \n\
-       /:::/____/     \\:::\\____\\/:::/  \\:::\\    \
-       /::\\____\\/:::/__\\:::\\   \\:::\\____\\/::\\   \\:::\\   \
-       \\:::\\____\\/::\\   \\:::\\   \\:::\\____\\ \n\
-       \\:::\\    \\      \\::/    /\\::/    \\:::\\  /:::/    \
-       /\\:::\\   \\:::\\   \\::/    /\\:::\\   \\:::\\   \\::/    \
-       /\\:::\\   \\:::\\   \\::/    / \n\
-      \ \\:::\\    \\      \\/____/  \\/____/ \\:::\\/:::/    /  \
-       \\:::\\   \\:::\\   \\/____/  \\:::\\   \\:::\\   \\/____/  \
-       \\:::\\   \\:::\\   \\/____/ \n\
-      \  \\:::\\    \\                       \\::::::/    /    \
-       \\:::\\   \\:::\\    \\       \\:::\\   \\:::\\    \\       \
-       \\:::\\   \\:::\\    \\     \n\
-      \   \\:::\\    \\                       \\::::/    /      \
-       \\:::\\   \\:::\\____\\       \\:::\\   \\:::\\____\\       \
-       \\:::\\   \\:::\\____\\    \n\
-      \    \\:::\\    \\                      /:::/    /        \
-       \\:::\\   \\::/    /        \\:::\\  /:::/    /        \\:::\\  \
-       /:::/    /    \n\
-      \     \\:::\\    \\                    /:::/    /          \
-       \\:::\\   \\/____/          \\:::\\/:::/    /          \
-       \\:::\\/:::/    /     \n\
-      \      \\:::\\    \\                  /:::/    /            \
-       \\:::\\    \\               \\::::::/    /            \
-       \\::::::/    /      \n\
-      \       \\:::\\____\\                /:::/    /              \
-       \\:::\\____\\               \\::::/    /              \
-       \\::::/    /       \n\
-      \        \\::/    /                \\::/    /                \
-       \\::/    /                \\::/    /                \\::/    \
-       /        \n\
-      \         \\/____/                  \\/____/                  \
-       \\/____/                  \\/____/                  \
-       \\/____/         "
-  in
-  let _ = print_endline "\n\nPress enter to begin..." in
+  print_endline "CS 3110 presents";
+  print_color light_color black_code
+    "\n\
+    \          _____                    _____                    \
+     _____                    _____                    _____          \n\
+    \         /\\    \\                  /\\    \\                  \
+     /\\    \\                  /\\    \\                  /\\    \
+     \\         \n\
+    \        /::\\    \\                /::\\____\\                \
+     /::\\    \\                /::\\    \\                /::\\    \
+     \\        \n\
+    \       /::::\\    \\              /:::/    /               \
+     /::::\\    \\              /::::\\    \\              /::::\\    \
+     \\       \n\
+    \      /::::::\\    \\            /:::/    /               \
+     /::::::\\    \\            /::::::\\    \\            \
+     /::::::\\    \\      \n\
+    \     /:::/\\:::\\    \\          /:::/    /               \
+     /:::/\\:::\\    \\          /:::/\\:::\\    \\          \
+     /:::/\\:::\\    \\     \n\
+    \    /:::/  \\:::\\    \\        /:::/____/               \
+     /:::/__\\:::\\    \\        /:::/__\\:::\\    \\        \
+     /:::/__\\:::\\    \\    \n\
+    \   /:::/    \\:::\\    \\      /::::\\    \\              \
+     /::::\\   \\:::\\    \\       \\:::\\   \\:::\\    \\       \
+     \\:::\\   \\:::\\    \\   \n\
+    \  /:::/    / \\:::\\    \\    /::::::\\    \\   _____    \
+     /::::::\\   \\:::\\    \\    ___\\:::\\   \\:::\\    \\    \
+     ___\\:::\\   \\:::\\    \\  \n\
+    \ /:::/    /   \\:::\\    \\  /:::/\\:::\\    \\ /\\    \\  \
+     /:::/\\:::\\   \\:::\\    \\  /\\   \\:::\\   \\:::\\    \\  \
+     /\\   \\:::\\   \\:::\\    \\ \n\
+     /:::/____/     \\:::\\____\\/:::/  \\:::\\    \
+     /::\\____\\/:::/__\\:::\\   \\:::\\____\\/::\\   \\:::\\   \
+     \\:::\\____\\/::\\   \\:::\\   \\:::\\____\\ \n\
+     \\:::\\    \\      \\::/    /\\::/    \\:::\\  /:::/    \
+     /\\:::\\   \\:::\\   \\::/    /\\:::\\   \\:::\\   \\::/    \
+     /\\:::\\   \\:::\\   \\::/    / \n\
+    \ \\:::\\    \\      \\/____/  \\/____/ \\:::\\/:::/    /  \
+     \\:::\\   \\:::\\   \\/____/  \\:::\\   \\:::\\   \\/____/  \
+     \\:::\\   \\:::\\   \\/____/ \n\
+    \  \\:::\\    \\                       \\::::::/    /    \\:::\\   \
+     \\:::\\    \\       \\:::\\   \\:::\\    \\       \\:::\\   \
+     \\:::\\    \\     \n\
+    \   \\:::\\    \\                       \\::::/    /      \
+     \\:::\\   \\:::\\____\\       \\:::\\   \\:::\\____\\       \
+     \\:::\\   \\:::\\____\\    \n\
+    \    \\:::\\    \\                      /:::/    /        \
+     \\:::\\   \\::/    /        \\:::\\  /:::/    /        \\:::\\  \
+     /:::/    /    \n\
+    \     \\:::\\    \\                    /:::/    /          \
+     \\:::\\   \\/____/          \\:::\\/:::/    /          \
+     \\:::\\/:::/    /     \n\
+    \      \\:::\\    \\                  /:::/    /            \
+     \\:::\\    \\               \\::::::/    /            \
+     \\::::::/    /      \n\
+    \       \\:::\\____\\                /:::/    /              \
+     \\:::\\____\\               \\::::/    /              \\::::/    \
+     /       \n\
+    \        \\::/    /                \\::/    /                \
+     \\::/    /                \\::/    /                \\::/    \
+     /        \n\
+    \         \\/____/                  \\/____/                  \
+     \\/____/                  \\/____/                  \
+     \\/____/         ";
+  print_endline "\n\nPress enter to begin...";
   let _ = read_line () in
-  print_endline "Welcome!" [@ocamlformat "disable"]
+  print_endline "Welcome!"
 
 let show_end =
+  print_color light_color black_code
+    "\n\
+    \  ___           ___           ___           \
+     ___                    ___                        ___           \
+     ___     \n\
+    \  /  /\\         /  /\\         /__/\\         /  \
+     /\\                  /  /\\          ___         /  /\\         \
+     /  /\\    \n\
+    \ /  /:/_       /  /::\\       |  |::\\       /  \
+     /:/_                /  /::\\        /__/\\       /  /:/_       /  \
+     /::\\   \n\
+     /  /:/ /\\     /  /:/\\:\\      |  |:|:\\     /  /:/ \
+     /\\              /  /:/\\:\\       \\  \\:\\     /  /:/ /\\     \
+     /  /:/\\:\\  \n\
+     /  /:/_/::\\   /  /:/~/::\\   __|__|:|\\:\\   /  /:/ \
+     /:/_            /  /:/  \\:\\       \\  \\:\\   /  /:/ /:/_   /  \
+     /:/~/:/  \n\
+     /__/:/__\\/\\:\\ /__/:/ /:/\\:\\ /__/::::| \\:\\ /__/:/ /:/ \
+     /\\          /__/:/ \\__\\:\\  ___  \\__\\:\\ /__/:/ /:/ /\\ \
+     /__/:/ /:/___\n\
+     \\  \\:\\ /~~/:/ \\  \\:\\/:/__\\/ \\  \\:\\~~\\__\\/ \\  \
+     \\:\\/:/ /:/          \\  \\:\\ /  /:/ /__/\\ |  |:| \\  \\:\\/:/ \
+     /:/ \\  \\:\\/:::::/\n\
+     \\  \\:\\  /:/   \\  \\::/       \\  \\:\\        \\  \\::/ \
+     /:/            \\  \\:\\  /:/  \\  \\:\\|  |:|  \\  \\::/ /:/   \
+     \\  \\::/~~~~ \n\
+     \\  \\:\\/:/     \\  \\:\\        \\  \\:\\        \\  \
+     \\:\\/:/              \\  \\:\\/:/    \\  \\:\\__|:|   \\  \
+     \\:\\/:/     \\  \\:\\     \n\
+    \ \\  \\::/       \\  \\:\\        \\  \\:\\        \\  \
+     \\::/                \\  \\::/      \\__\\::::/     \\  \
+     \\::/       \\  \\:\\    \n\
+    \  \\__\\/         \\__\\/         \\__\\/         \
+     \\__\\/                  \\__\\/           ~~~~       \
+     \\__\\/         \\__\\/    \n\
+    \  \n";
+  print_endline "You loose!"
+
+let instructions =
   let _ =
     print_color light_color black_code
       "\n\
-      \  ___           ___           ___           \
-       ___                    ___                        ___           \
-       ___     \n\
-      \  /  /\\         /  /\\         /__/\\         /  \
-       /\\                  /  /\\          ___         /  /\\         \
-       /  /\\    \n\
-      \ /  /:/_       /  /::\\       |  |::\\       /  \
-       /:/_                /  /::\\        /__/\\       /  /:/_       \
-       /  /::\\   \n\
-       /  /:/ /\\     /  /:/\\:\\      |  |:|:\\     /  /:/ \
-       /\\              /  /:/\\:\\       \\  \\:\\     /  /:/ /\\     \
-       /  /:/\\:\\  \n\
-       /  /:/_/::\\   /  /:/~/::\\   __|__|:|\\:\\   /  /:/ \
-       /:/_            /  /:/  \\:\\       \\  \\:\\   /  /:/ /:/_   \
-       /  /:/~/:/  \n\
-       /__/:/__\\/\\:\\ /__/:/ /:/\\:\\ /__/::::| \\:\\ /__/:/ /:/ \
-       /\\          /__/:/ \\__\\:\\  ___  \\__\\:\\ /__/:/ /:/ /\\ \
-       /__/:/ /:/___\n\
-       \\  \\:\\ /~~/:/ \\  \\:\\/:/__\\/ \\  \\:\\~~\\__\\/ \\  \
-       \\:\\/:/ /:/          \\  \\:\\ /  /:/ /__/\\ |  |:| \\  \
-       \\:\\/:/ /:/ \\  \\:\\/:::::/\n\
-       \\  \\:\\  /:/   \\  \\::/       \\  \\:\\        \\  \\::/ \
-       /:/            \\  \\:\\  /:/  \\  \\:\\|  |:|  \\  \\::/ /:/   \
-       \\  \\::/~~~~ \n\
-       \\  \\:\\/:/     \\  \\:\\        \\  \\:\\        \\  \
-       \\:\\/:/              \\  \\:\\/:/    \\  \\:\\__|:|   \\  \
-       \\:\\/:/     \\  \\:\\     \n\
-      \ \\  \\::/       \\  \\:\\        \\  \\:\\        \\  \
-       \\::/                \\  \\::/      \\__\\::::/     \\  \
-       \\::/       \\  \\:\\    \n\
-      \  \\__\\/         \\__\\/         \\__\\/         \
-       \\__\\/                  \\__\\/           ~~~~       \
-       \\__\\/         \\__\\/    \n\
-      \  \n"
+      \  This is a two player game. \n\n\
+      \  Pawn: ♟︎\n\
+      \  1.  On a Pawn’s first move, it can move forward one or two \
+       squares.\n\
+      \  2.  When capturing a piece (see description on back), a Pawn \
+       moves one square diagonally ahead.\n\
+      \  \n\
+      \  Knight: ♞ \n\
+      \  1.  Knights move three squares at a time: two spaces forward \
+       or backward, then one space left or right, or two spaces to the \
+       \t\n\
+      \  left or right, then one space forward or backward. \n\
+      \  2.  The move looks like the letter L. The Knight always ends \
+       up landing on a square opposite the color from which it started.\n\
+      \  \n\
+      \  Bishop: ♝\n\
+      \  1.  Bishops moves diagonally as many open squares as you like. \n\
+      \  2.  The Bishop must remain on the same color square as it \
+       started the game on. \n\
+      \  \n\
+      \  Rook: ♜\n\
+      \  1.  Rook moves in a straight line, horizontally or vertically \
+       as many open squares as you like.\n\
+      \  Besides the Queen, the Rook is the next most powerful Play \
+       Piece\n\
+      \  \n\
+      \  Queen: ♛\n\
+      \  1.  Queen is the most powerful of the Play Pieces. \n\
+      \  2.  The Queen moves in any direction (horizontally, \
+       vertically or diagonally) as many open squares as you like. \n\
+      \  \n\
+      \  King: ♚\n\
+      \  1.  King is the most important Play Piece, because if it \
+       becomes trapped, you’ll lose the game.\n\
+      \  2.  The King moves one square in any direction, as long as it \
+       doesn’t put itself in Check\n\n\
+      \  Check: \n\
+      \  Checkmate:\n\
+      \  Capturing:\n\
+      \  Castling:\n\
+      \  Winning:\n\
+      \  \n\
+      \  "
   in
-  print_endline "You loose!" [@ocamlformat "disable"]
+  print_endline "Let's play!"

@@ -68,7 +68,7 @@ let rec clear_path pieces =
   match pieces with
   |[] -> true
   |(a,b)::t when a = Empty -> true && clear_path t
-  |(a,b)::t when a != Empty -> false
+  |(a,b)::t when a <> Empty -> false
   |_ -> failwith("clear_path failure")
 
 (**[friendly_fire board start finish] returns true if start and finish hold pieces of the same color*)
@@ -84,11 +84,11 @@ let pawn_legality board start finish =
   (*Black goes down *)
   else if double_second (Game_state.get_square board start) = Black && finish.rank>start.rank then false
   (*Can only move by two at start*)
-  else if (finish.rank-start.rank = 2 && start.rank != 2)  || (start.rank-finish.rank = 2 && start.rank != 7) then false
+  else if (finish.rank-start.rank = 2 && start.rank <> 2)  || (start.rank-finish.rank = 2 && start.rank <> 7) then false
   (*Can only move diagonally if theres a piece there*)
-  else if start.file!=finish.file &&  double_first (Game_state.get_square board finish) = Empty then false
+  else if start.file<>finish.file &&  double_first (Game_state.get_square board finish) = Empty then false
   (*Can't take pieces moving vertically *)
-  else if start.file=finish.file && double_first (Game_state.get_square board finish) != Empty then false
+  else if start.file=finish.file && double_first (Game_state.get_square board finish) <> Empty then false
   else let possible_moves = Piece.get_moves (double_first (get_square board start))  (start.file,start.rank) in
     List.exists (equal_tuple (finish.file,finish.rank)) possible_moves
 
@@ -101,6 +101,31 @@ let piece_legality board start finish =
 let right_color board start = 
   let the_piece = Game_state.get_square board start in
   (double_second the_piece) = Game_state.color_to_move board
+
+
+let update_castle_availability_white board start finish=
+  let prev_castle_ability = get_castle_availability board (Game_state.color_to_move board) in
+  match prev_castle_ability with
+  |{king_side=false;queen_side=false} -> board
+  |{king_side=true;queen_side=false} -> board
+  |{king_side=false;queen_side=true} -> board
+  |{king_side=true;queen_side=true} -> board
+
+let update_castle_availability_black board start finish=
+  let prev_castle_ability = get_castle_availability board (Game_state.color_to_move board) in
+  match prev_castle_ability with
+  |{king_side=false;queen_side=false} -> board
+  |{king_side=true;queen_side=false} -> board
+  |{king_side=false;queen_side=true} -> board
+  |{king_side=true;queen_side=true} -> board
+
+
+let update_castle_availability board start finish = 
+  if (Game_state.color_to_move board) = White then update_castle_availability_white board start finish
+  else update_castle_availability_black board start finish
+
+
+
 
 let move_is_legal board start finish = (piece_legality board start finish) && 
                                        (not (friendly_fire board start finish)) && 
@@ -117,7 +142,9 @@ let attempt_move_no_checks board start finish =
 (**[attempt_move board board_coord board_coord] validates all board
    considerations (checks, blocked pieces, castling ect.)
    Returns[board, Legal] if the move is allowed*)
-let attempt_move board start finish = if move_is_legal board start finish then attempt_move_no_checks board start finish else (board,Game_state.Illegal,(Empty,NoPiece))
+let attempt_move board start finish = 
+  let board_castle_availablility_adjusted = set_castle_availability board (Game_state.color_to_move board) {king_side = true; queen_side = true} in
+  if move_is_legal board start finish then attempt_move_no_checks board_castle_availablility_adjusted start finish else (board,Game_state.Illegal,(Empty,NoPiece))
 
 (*let attempt_move = attempt_move_no_checks*)
 
