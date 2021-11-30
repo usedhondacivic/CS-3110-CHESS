@@ -1,7 +1,7 @@
 (** [game_state] holds information about the board and the current state
     of the game. *)
 
-(** [piece] represents possible chess pieces]. *)
+(** [piece] represents possible chess pieces. *)
 type piece =
   | Pawn
   | Rook

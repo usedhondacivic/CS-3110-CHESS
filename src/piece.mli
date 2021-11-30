@@ -16,4 +16,4 @@ type start = int * int
 val get_moves : Game_state.piece -> start -> move list
 (** [get_moves] is the list of possible moves of piece[p] at starting
     position [start] on the board [brd]. Raises: [UnknownPiece piece] if
-    piece [p] is not a valid piece name in [p]]. *)
+    piece [p] is not a valid piece name in [p]. *)
