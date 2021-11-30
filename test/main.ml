@@ -6,6 +6,11 @@ open Move_validation
 open Piece
 open Ui
 
+(**Test Plan: The test suite tests the modules: game_state, game_play,
+   move_validation, piece and ui. Tested in OUnit: 1)game_state,
+   2)game_play, 3)move_validation, 4)piece. Manually tested : 1)ui Piece
+   is tested using Glass-Box testing. *)
+
 (**Print tuple for testing *)
 let print_tuples = function
   | {
