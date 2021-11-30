@@ -102,49 +102,113 @@ let right_color board start =
   let the_piece = Game_state.get_square board start in
   (double_second the_piece) = Game_state.color_to_move board
 
+let white_king_moved = ref false
+let white_queen_rook_moved = ref false
+let white_king_rook_moved = ref false
+let black_king_moved = ref false
+let black_queen_rook_moved = ref false
+let black_king_rook_moved = ref false
+
+
+
 
 let update_castle_availability_white board start finish=
-  let prev_castle_ability = get_castle_availability board (Game_state.color_to_move board) in
-  match prev_castle_ability with
-  |{king_side=false;queen_side=false} -> board
-  |{king_side=true;queen_side=false} -> board
-  |{king_side=false;queen_side=true} -> board
-  |{king_side=true;queen_side=true} -> board
+  if Game_state.get_square board {rank = 1;file = 8} <> (Rook,White) then white_king_rook_moved := true;
+  if Game_state.get_square board {rank = 1;file = 1} <> (Rook,White)  then white_queen_rook_moved := true;
+  if Game_state.get_square board {rank = 1;file = 5} <> (King,White)  then white_king_moved := true;
+  let b1 = Game_state.get_square board  {rank = 1;file = 2} in
+  let c1 = Game_state.get_square board  {rank = 1;file = 3} in
+  let d1 = Game_state.get_square board  {rank = 1;file = 4} in
+  let check_castle_queen = (fst b1 = Empty) && (fst c1 = Empty) && (fst d1 = Empty) && not !white_king_moved && not !white_queen_rook_moved in
+  let f1 = Game_state.get_square board  {rank = 1;file = 6} in
+  let g1 = Game_state.get_square board  {rank = 1;file = 7} in
+  let check_castle_king = (fst f1 = Empty) && (fst g1 = Empty) && not !white_king_moved && not !white_king_rook_moved in
+  Game_state.set_castle_availability board White {king_side = check_castle_king; queen_side = check_castle_queen} 
 
 let update_castle_availability_black board start finish=
-  let prev_castle_ability = get_castle_availability board (Game_state.color_to_move board) in
-  match prev_castle_ability with
-  |{king_side=false;queen_side=false} -> board
-  |{king_side=true;queen_side=false} -> board
-  |{king_side=false;queen_side=true} -> board
-  |{king_side=true;queen_side=true} -> board
-
+  if Game_state.get_square board {rank = 8;file = 8} <> (Rook,Black) then black_king_rook_moved := true;
+  if Game_state.get_square board {rank = 8;file = 1} <> (Rook,Black)  then black_queen_rook_moved := true;
+  if Game_state.get_square board {rank = 8;file = 5} <> (King,Black)  then black_king_moved := true;
+  let b8 = Game_state.get_square board  {rank = 8;file = 2} in
+  let c8 = Game_state.get_square board  {rank = 8;file = 3} in
+  let d8 = Game_state.get_square board  {rank = 8;file = 4} in
+  let check_castle_queen = (fst b8 = Empty) && (fst c8 = Empty) && (fst d8 = Empty) && not !black_king_moved && not !black_queen_rook_moved in
+  let f8 = Game_state.get_square board  {rank = 8;file = 6} in
+  let g8 = Game_state.get_square board  {rank = 8;file = 7} in
+  let check_castle_king = (fst f8 = Empty) && (fst g8 = Empty) && not !black_king_moved && not !black_king_rook_moved in
+  Game_state.set_castle_availability board Black {king_side = check_castle_king; queen_side = check_castle_queen} 
 
 let update_castle_availability board start finish = 
   if (Game_state.color_to_move board) = White then update_castle_availability_white board start finish
   else update_castle_availability_black board start finish
 
+let detect_castle board start finish =
+  let king = Game_state.get_square board start in
+  if (start = {rank = 1;file = 5} && fst king = King && (finish = {rank = 1;file = 7} || finish = {rank = 1;file = 3})) ||
+     (start = {rank = 8;file = 5} && fst king = King && (finish = {rank = 8;file = 7} || finish = {rank = 8;file = 3}))
+  then true
+  else false
+
+let castle board start finish =
+  if finish = {rank = 1;file = 7} && (get_castle_availability board White).king_side then
+    let aboard = Game_state.set_square board {rank = 1;file = 5} (Empty, NoPiece) in
+    let bboard = Game_state.set_square aboard {rank = 1;file = 8} (Empty, NoPiece) in
+    let cboard = Game_state.set_square bboard {rank = 1;file = 7}  (King, White) in
+    let dboard = Game_state.set_square cboard {rank = 1;file = 6}  (Rook, White) in
+    (dboard,Game_state.Legal,(Empty,NoPiece))
+  else if finish = {rank = 1;file = 7} && not (get_castle_availability board White).king_side then (board,Game_state.Illegal,(Empty,NoPiece))
+  else if finish = {rank = 1;file = 3} && (get_castle_availability board White).queen_side then 
+    let aboard = Game_state.set_square board {rank = 1;file = 5} (Empty, NoPiece) in
+    let bboard = Game_state.set_square aboard {rank = 1;file = 1} (Empty, NoPiece) in
+    let cboard = Game_state.set_square bboard {rank = 1;file = 3}  (King, White) in
+    let dboard = Game_state.set_square cboard {rank = 1;file = 4}  (Rook, White) in
+    (dboard,Game_state.Legal,(Empty,NoPiece))
+  else if finish = {rank = 1;file = 3} && not (get_castle_availability board White).queen_side then (board,Game_state.Illegal,(Empty,NoPiece))
+
+  else if finish = {rank = 8;file = 7} && (get_castle_availability board Black).king_side then
+    let aboard = Game_state.set_square board {rank = 8;file = 5} (Empty, NoPiece) in
+    let bboard = Game_state.set_square aboard {rank = 8;file = 8} (Empty, NoPiece) in
+    let cboard = Game_state.set_square bboard {rank = 8;file = 7}  (King, Black) in
+    let dboard = Game_state.set_square cboard {rank = 8;file = 6}  (Rook, Black) in
+    (dboard,Game_state.Legal,(Empty,NoPiece))
+  else if finish = {rank = 8;file = 7} && not (get_castle_availability board Black).king_side then (board,Game_state.Illegal,(Empty,NoPiece))
+  else if finish = {rank = 8;file = 3} && (get_castle_availability board Black).queen_side then 
+    let aboard = Game_state.set_square board {rank = 8;file = 5} (Empty, NoPiece) in
+    let bboard = Game_state.set_square aboard {rank = 8;file = 1} (Empty, NoPiece) in
+    let cboard = Game_state.set_square bboard {rank = 8;file = 3}  (King, Black) in
+    let dboard = Game_state.set_square cboard {rank = 8;file = 4}  (Rook, Black) in
+    (dboard,Game_state.Legal,(Empty,NoPiece))
+  else if finish = {rank = 8;file = 3} && not (get_castle_availability board Black).queen_side then (board,Game_state.Illegal,(Empty,NoPiece))
+
+
+  else failwith("castle error")
 
 
 
-let move_is_legal board start finish = (piece_legality board start finish) && 
+let move_is_legal board start finish = (piece_legality board start finish || detect_castle board start finish) && 
                                        (not (friendly_fire board start finish)) && 
                                        clear_path (pieces_in_between board start finish) &&
                                        right_color board start
 (** [attempt_move_no_checks board start finish] creates the board assuming the move is valid*)
 let attempt_move_no_checks board start finish =
-  let the_piece = Game_state.get_square board start in
-  let board_with_piece_removed =
-    Game_state.set_square board start (Empty, NoPiece)
-  in
-  (Game_state.set_square board_with_piece_removed finish the_piece,Game_state.Legal,Game_state.get_square board finish)
+  if detect_castle board start finish
+  then castle board start finish else 
+    let the_piece = Game_state.get_square board start in
+    let board_with_piece_removed =
+      Game_state.set_square board start (Empty, NoPiece)
+    in
+    (Game_state.set_square board_with_piece_removed finish the_piece,Game_state.Legal,Game_state.get_square board finish)
 
 (**[attempt_move board board_coord board_coord] validates all board
    considerations (checks, blocked pieces, castling ect.)
    Returns[board, Legal] if the move is allowed*)
 let attempt_move board start finish = 
-  let board_castle_availablility_adjusted = set_castle_availability board (Game_state.color_to_move board) {king_side = true; queen_side = true} in
-  if move_is_legal board start finish then attempt_move_no_checks board_castle_availablility_adjusted start finish else (board,Game_state.Illegal,(Empty,NoPiece))
+
+  if move_is_legal board start finish 
+  then 
+    let board_castle_availablility_adjusted = update_castle_availability board start finish in
+    attempt_move_no_checks board_castle_availablility_adjusted start finish 
+  else (board,Game_state.Illegal,(Empty,NoPiece))
 
 (*let attempt_move = attempt_move_no_checks*)
 
