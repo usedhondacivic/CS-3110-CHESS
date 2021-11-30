@@ -2,12 +2,13 @@ type valid = {
   start : Game_state.board_coord;
   next : Game_state.board_coord;
 }
+(** [valid] represents a possible chess piece move *)
 
 type move =
   | Valid of valid
   | End
-
-(** The type of inputted move to show start and next square*)
+      (** [move] represents whether player's input is to End game or
+          possible move *)
 
 val check : string -> valid
 (** Checks if inputted move is valid (square on board) and returns move

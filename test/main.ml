@@ -91,10 +91,7 @@ let generate_move_tests =
 let game_state_tests = generate_move_tests
 
 (** Construct OUnit tests for Gameplay*)
-let check_test
-    (name : string)
-    (input : string)
-    (expected_output : Gameplay.move) : test =
+let check_test (name : string) (input : string) expected_output : test =
   name >:: fun _ ->
   assert_equal expected_output (check input) ~printer:print_tuples
 
