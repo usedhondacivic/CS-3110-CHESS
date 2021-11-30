@@ -1,7 +1,11 @@
-type move = {
+type valid = {
   start : Game_state.board_coord;
   next : Game_state.board_coord;
 }
+
+type move =
+  | Valid of valid
+  | End
 
 (** check if file letter A-H*)
 let check_file file_num =
@@ -41,10 +45,12 @@ let get_start start_end =
 let rec take_move s =
   let _ = print_endline "Where would you like to move? (Ex: A4 A6): " in
   let s = read_line () in
-  try check s
-  with exc ->
-    let _ = print_endline "Wrong input. Try again: " in
-    take_move s
+  if s = "quit" || s = "Quit" then End
+  else
+    try Valid (check s)
+    with exc ->
+      let _ = print_endline "Wrong input. Try again: " in
+      take_move s
 
 let print_time color state exec_time =
   match color with

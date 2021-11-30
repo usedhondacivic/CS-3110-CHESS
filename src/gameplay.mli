@@ -1,10 +1,15 @@
-type move = {
+type valid = {
   start : Game_state.board_coord;
   next : Game_state.board_coord;
 }
+
+type move =
+  | Valid of valid
+  | End
+
 (** The type of inputted move to show start and next square*)
 
-val check : string -> move
+val check : string -> valid
 (** Checks if inputted move is valid (square on board) and returns move
     if valid and raises Failure if invalid move*)
 
@@ -19,4 +24,5 @@ val take_move : string -> move
 
 val print_time :
   Game_state.color -> Game_state.game_state -> int -> Game_state.time
-(** Returns new time based on how long it took for a color to move*)
+(** Returns new time of both players based on how long it took for one
+    player to move*)
