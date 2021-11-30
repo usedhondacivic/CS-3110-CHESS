@@ -19,6 +19,10 @@ zip:
 	rm -f chess.zip
 	zip -r chess.zip . -x@exclude.lst
 
+doc:
+	dune build @doc		
+
 loc:
 	ocamlbuild -clean
 	cloc --by-file --include-lang=OCaml .
+
