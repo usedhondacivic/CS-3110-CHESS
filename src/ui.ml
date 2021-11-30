@@ -67,7 +67,7 @@ let rec string_of_length symb length =
   | x -> symb ^ string_of_length symb (length - 1)
 
 let rec row_helper col row offset board =
-  if col > 0 then (
+  if col > 0 then
     let back =
       if (col + offset) mod 2 = 1 then dark_color else light_color
     in
@@ -81,16 +81,15 @@ let rec row_helper col row offset board =
         | Black -> black_code
         | NoPiece -> white_code
       in
-      let _ =
-        print_color front back
-          (string_of_length " " (fst square_size / 2))
-      in
+      print_color front back
+        (string_of_length " " (fst square_size / 2));
       print_color front back (Game_state.get_piece_str piece);
       print_color front back
         (string_of_length " " (fst square_size / 2));
       row_helper (col - 1) row offset board)
-    else print_color 0 back (string_of_length " " (fst square_size));
-    row_helper (col - 1) row offset board)
+    else (
+      print_color 0 back (string_of_length " " (fst square_size));
+      row_helper (col - 1) row offset board)
 
 let rec square_helper row offset (state : Game_state.game_state) =
   let board = state.board in
@@ -112,9 +111,10 @@ let rec square_helper row offset (state : Game_state.game_state) =
 let draw_row offset state = square_helper (snd square_size) offset state
 
 let rec board_helper row state =
-  if row > 0 then draw_row row state;
-  board_helper (row - 1) state;
-  ()
+  if row > 0 then (
+    draw_row row state;
+    board_helper (row - 1) state;
+    ())
 
 let update_display (curr_state : Game_state.game_state) =
   let half_spacer = string_of_length " " (fst square_size / 2) in
