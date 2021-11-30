@@ -1,7 +1,7 @@
 (** [game_state] holds information about the board and the current state
     of the game. *)
 
-(** [piece] represents possible chess pieces]. *)
+(** [piece] represents possible chess pieces. *)
 type piece =
   | Pawn
   | Rook
@@ -82,10 +82,7 @@ val get_board_from_FEN : string -> board
 
 val color_to_move : board -> color
 (** [color_to_move] returns the color of the current player. *)
-<<<<<<< HEAD
-=======
 
 val board_to_list : board -> string list
->>>>>>> a104f2b58ad33737e7bcf79d26ff3def924ddd08
 
 val compare_game_board : board -> board -> bool
