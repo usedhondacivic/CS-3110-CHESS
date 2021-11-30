@@ -31,22 +31,8 @@ let read_file filename =
     close_in chan;
     List.rev !lines
 
-let game_data =
-  read_file "./test/data/game_one.csv"
-  |> List.map (fun a -> String.split_on_char ',' a)
-  |> List.flatten
-
-let rec get_checks data =
-  match data with
-  | [ before; move; after ] -> [ (move, before, after, move) ]
-  | before :: move :: after :: t ->
-      (move, before, after, move) :: get_checks (after :: t)
-  | _ -> []
-
 let rec list_to_string b =
   match b with [] -> "" | h :: t -> h ^ "\n" ^ list_to_string t
-
-let moves_to_check = get_checks game_data
 
 let check_move curr_fen next_fen move =
   let m = Gameplay.check move in
@@ -88,12 +74,24 @@ let t_output = (true, "", [], [], [])
   KQkq e3 0 1", "rnbqkbnr/pppppppp/8/1B6/4P3/8/PPPP1PPP/RNBQK1NR b KQkq
   - 0 1", "F1 B5" ); ]*)
 
-let generate_move_tests =
-  moves_to_check
+let game_one =
+  read_file "./test/data/game_one.csv"
+  |> List.map (fun a -> String.split_on_char ',' a)
+  |> List.flatten
+
+let rec get_checks data =
+  match data with
+  | [ before; move; after ] -> [ (move, before, after, move) ]
+  | before :: move :: after :: t ->
+      (move, before, after, move) :: get_checks (after :: t)
+  | _ -> []
+
+let generate_move_tests lst =
+  lst
   |> List.map (fun (n, b, a, m) -> (n, check_move b a m))
   |> List.map (fun (n, m) -> check_move_test n t_output m)
 
-let game_state_tests = generate_move_tests
+let game_state_tests = game_one |> get_checks |> generate_move_tests
 
 (** Construct OUnit tests for Gameplay*)
 let check_test
