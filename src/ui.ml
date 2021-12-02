@@ -242,7 +242,7 @@ let show_end =
      \\__\\/                  \\__\\/           ~~~~       \
      \\__\\/         \\__\\/    \n\
     \  \n";
-  print_endline "You loose!"
+  print_endline "You lose!"
 
 let instructions =
   let _ =

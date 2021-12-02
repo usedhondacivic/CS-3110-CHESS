@@ -164,19 +164,13 @@ let game_state_tests =
 let check_test
     (name : string)
     (input : string)
-    (expected_output : Gameplay.move) : test =
+    (expected_output : Gameplay.valid) : test =
   name >:: fun _ ->
   assert_equal expected_output (check input) ~printer:print_tuples
 
 let check_error_test (name : string) (input : string) =
   name >:: fun _ ->
   assert_raises (Failure "new input needed") (fun () -> check input)
-
-let get_start_test
-    (name : string)
-    (input : string)
-    (expected_output : Game_state.board_coord) : test =
-  name >:: fun _ -> assert_equal expected_output (get_start input)
 
 let print_time_test
     (name : string)
@@ -197,6 +191,8 @@ let gameplay_tests =
       { start = { rank = 4; file = 1 }; next = { rank = 6; file = 1 } };
     check_test "'A4 B8' is on board" "A4 B8"
       { start = { rank = 4; file = 1 }; next = { rank = 8; file = 2 } };
+    check_test "'a4 b8' is on board" "a4 b8"
+      { start = { rank = 4; file = 1 }; next = { rank = 8; file = 2 } };
     check_error_test "'A4 A9' is not on the board, throws Failure"
       "A4 A9";
     check_error_test
@@ -205,8 +201,6 @@ let gameplay_tests =
       "throws Failure because 44 is not a number on boardd" "A4 A44";
     check_error_test
       "throws Failure because 44 is not a number on boardd" "B66 B7";
-    get_start_test "Start square of" "A4 A6" { rank = 4; file = 1 };
-    get_start_test "Start square of" "C7 B8" { rank = 7; file = 3 };
     print_time_test
       "White's turn, started with 300 and takes 10 seconds" White
       {

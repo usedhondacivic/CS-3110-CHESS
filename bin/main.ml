@@ -12,7 +12,7 @@ let start_state : Game_state.game_state =
     board = start_board;
     white_taken = [];
     black_taken = [];
-    time = (300, 300);
+    time = (10, 10);
   }
 
 let turn_swap result =
@@ -45,21 +45,27 @@ let rec gameplay_loop (state : Game_state.game_state) =
   let _ = Ui.update_display state in
   let t = Unix.gettimeofday () in
   let move = Gameplay.take_move "" in
-  let move_result =
-    Move_validation.attempt_move state.board move.start move.next
-  in
-  let exec_time = Unix.gettimeofday () -. t in
-  let new_time =
-    Gameplay.print_time
-      (Game_state.color_to_move state.board)
-      state
-      (int_of_float exec_time)
-  in
-  let result = turn_swap move_result in
-  let new_board = fst result in
-  let taken_piece = snd result in
-  let new_state = update_state state new_board taken_piece in
-  gameplay_loop (Game_state.set_time new_state new_time)
+  if Gameplay.check_end move then
+    let move_result =
+      Move_validation.attempt_move state.board
+        (Gameplay.return_start move true)
+        (Gameplay.return_start move false)
+    in
+    let exec_time = Unix.gettimeofday () -. t in
+    let remain_time =
+      Gameplay.print_time
+        (Game_state.color_to_move state.board)
+        state
+        (int_of_float exec_time)
+    in
+    if Gameplay.still_time remain_time then
+      let result = turn_swap move_result in
+      let new_board = fst result in
+      let taken_piece = snd result in
+      let new_state = update_state state new_board taken_piece in
+      gameplay_loop (Game_state.set_time new_state remain_time)
+    else Ui.show_end
+  else Ui.show_end
 
 let _ = Ui.show_start
 

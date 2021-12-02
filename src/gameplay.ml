@@ -1,7 +1,11 @@
-type move = {
+type valid = {
   start : Game_state.board_coord;
   next : Game_state.board_coord;
 }
+
+type move =
+  | Valid of valid
+  | End
 
 (** check if file letter A-H*)
 let check_file file_num =
@@ -12,10 +16,12 @@ let check_rank rank_num =
   let rank_num = rank_num in
   if rank_num >= 1 && rank_num <= 8 then true else false
 
+let lower_to_upper dec = if dec >= 97 then dec - 32 else dec
+
 (** checking file and rank in range, returns true if valid and false if
     not*)
 let check_file_rank place =
-  let file_place = Char.code place.[0] in
+  let file_place = lower_to_upper (Char.code place.[0]) in
   let rank_place =
     int_of_string (String.sub place 1 (String.length place - 1))
   in
@@ -32,17 +38,15 @@ let check start_end =
   | [ hd; tl ] -> { start = hd; next = tl }
   | _ :: _ -> failwith "new input needed"
 
-let get_start start_end =
-  let input_move = check start_end in
-  input_move.start
-
 let rec take_move s =
   let _ = print_endline "Where would you like to move? (Ex: A4 A6): " in
   let s = read_line () in
-  try check s
-  with exc ->
-    let _ = print_endline "Wrong input. Try again: " in
-    take_move s
+  if s = "quit" || s = "Quit" then End
+  else
+    try Valid (check s)
+    with exc ->
+      let _ = print_endline "Wrong input. Try again: " in
+      take_move s
 
 let print_time color state exec_time =
   match color with
@@ -51,3 +55,14 @@ let print_time color state exec_time =
   | Game_state.Black -> (
       match Game_state.get_time state with a, b -> (a, b - exec_time))
   | Game_state.NoPiece -> failwith "not meet procondition"
+
+let check_end move =
+  match move with End -> false | Valid { start = _; next = _ } -> true
+
+let return_start move start =
+  match move with
+  | Valid { start = a; next = b } -> if start = true then a else b
+  | _ -> failwith "not meet precondition"
+
+let still_time time =
+  match time with w, b -> if w > 0 && b > 0 then true else false
