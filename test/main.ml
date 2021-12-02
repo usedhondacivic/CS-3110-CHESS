@@ -6,6 +6,11 @@ open Move_validation
 open Piece
 open Ui
 
+(**Test Plan: The test suite tests the modules: game_state, game_play,
+   move_validation, piece and ui. Tested in OUnit: 1)game_state,
+   2)game_play, 3)move_validation, 4)piece. Manually tested : 1)ui Piece
+   is tested using Glass-Box testing. *)
+
 (**Print tuple for testing *)
 let print_tuples = function
   | {
@@ -31,22 +36,8 @@ let read_file filename =
     close_in chan;
     List.rev !lines
 
-let game_data =
-  read_file "./test/data/game_one.csv"
-  |> List.map (fun a -> String.split_on_char ',' a)
-  |> List.flatten
-
-let rec get_checks data =
-  match data with
-  | [ before; move; after ] -> [ (move, before, after, move) ]
-  | before :: move :: after :: t ->
-      (move, before, after, move) :: get_checks (after :: t)
-  | _ -> []
-
 let rec list_to_string b =
   match b with [] -> "" | h :: t -> h ^ "\n" ^ list_to_string t
-
-let moves_to_check = get_checks game_data
 
 let check_move curr_fen next_fen move =
   let m = Gameplay.check move in
@@ -81,19 +72,84 @@ let check_move_test =
 
 let t_output = (true, "", [], [], [])
 
-(*let moves_to_check = [ ( "Pawn move",
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-  "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", "E2 E4"
-  ); ( "Bishop move", "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b
-  KQkq e3 0 1", "rnbqkbnr/pppppppp/8/1B6/4P3/8/PPPP1PPP/RNBQK1NR b KQkq
-  - 0 1", "F1 B5" ); ]*)
+let rec get_checks data =
+  match data with
+  | [ before; move; after ] -> [ (move, before, after, move) ]
+  | before :: move :: after :: t ->
+      (move, before, after, move) :: get_checks (after :: t)
+  | _ -> []
 
-let generate_move_tests =
-  moves_to_check
+let generate_move_tests lst =
+  lst
   |> List.map (fun (n, b, a, m) -> (n, check_move b a m))
   |> List.map (fun (n, m) -> check_move_test n t_output m)
 
-let game_state_tests = generate_move_tests
+let game_one =
+  read_file "./test/data/game_one.csv"
+  |> List.map (fun a -> String.split_on_char ',' a)
+  |> List.flatten
+
+let game_one_tests = game_one |> get_checks
+
+let illegal_move_tests =
+  [
+    ( "Empty start square",
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "A3 A4" );
+    ( "King side castle after king move",
+      "rnbqkbnr/pppppppp/8/8/2B1P3/5N2/PPPPQPPP/RNB1K2R w Qkq - 0 1",
+      "rnbqkbnr/pppppppp/8/8/2B1P3/5N2/PPPPQPPP/RNB1K2R w Qkq - 0 1",
+      "E1 G1" );
+    ( "Queen side castle after king move",
+      "rnbqkbnr/pppppppp/8/8/2B1P3/2NP1N2/PPPBQPPP/R3K2R w kq - 0 1",
+      "rnbqkbnr/pppppppp/8/8/2B1P3/2NP1N2/PPPBQPPP/R3K2R w kq - 0 1",
+      "E1 C1" );
+    ( "Queen side castle with piece in the way",
+      "rnbqkbnr/pppppppp/8/8/2B1P3/3P1N2/PPPBQPPP/RN2K2R w kq - 0 1",
+      "rnbqkbnr/pppppppp/8/8/2B1P3/3P1N2/PPPBQPPP/RN2K2R w kq - 0 1",
+      "E1 C1" );
+    ( "King side castle with piece in the way",
+      "rnbqkbnr/pppppppp/8/8/1BB1P3/3PQ3/PPP2PPP/RN2KN1R w kq - 0 1",
+      "rnbqkbnr/pppppppp/8/8/1BB1P3/3PQ3/PPP2PPP/RN2KN1R w kq - 0 1",
+      "E1 G1" );
+    ( "King side castle with check in the way",
+      "rnb1kbnr/pppppppp/8/1q6/1B1PP3/1B2Q1N1/PPP2PPP/RN2K2R w KQkq - \
+       0 1",
+      "rnb1kbnr/pppppppp/8/1q6/1B1PP3/1B2Q1N1/PPP2PPP/RN2K2R w KQkq - \
+       0 1",
+      "E1 G1" );
+    ( "Queen side castle with check in the way",
+      "rnb1kbnr/pppppppp/8/8/1B1PP1q1/1B1NQ1N1/PPP2PPP/R3K2R w KQkq - \
+       0 1",
+      "rnb1kbnr/pppppppp/8/8/1B1PP1q1/1B1NQ1N1/PPP2PPP/R3K2R w KQkq - \
+       0 1",
+      "E1 C1" );
+    ( "Move into check",
+      "7k/6r1/8/8/8/8/7P/7K w - - 0 1",
+      "7k/6r1/8/8/8/8/7P/7K w - - 0 1",
+      "H1 G1" );
+    ( "Move piece causes check",
+      "7k/7r/8/8/8/8/7N/7K w - - 0 1",
+      "7k/7r/8/8/8/8/7N/7K w - - 0 1",
+      "H2 F3" );
+  ]
+
+let edge_case_moves =
+  [
+    ( "En passant",
+      "7k/8/8/3pP3/8/8/8/K7 w - d6 0 1",
+      "7k/8/3P4/8/8/8/8/K7 w - - 0 1",
+      "E5 D6" );
+    ( "Promotion to queen",
+      "7k/3P4/8/8/8/8/8/K7 w - - 0 1",
+      "3Q3k/8/8/8/8/8/8/K7 w - - 0 1",
+      "D7 D8" );
+  ]
+
+let game_state_tests =
+  List.flatten [ game_one_tests; illegal_move_tests; edge_case_moves ]
+  |> generate_move_tests
 
 (** Construct OUnit tests for Gameplay*)
 let check_test
