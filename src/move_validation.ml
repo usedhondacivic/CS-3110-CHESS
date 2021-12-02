@@ -183,6 +183,11 @@ let castle board start finish =
 
   else failwith("castle error")
 
+let detect_promotion board start finish =
+  (Game_state.get_square board start = (Pawn,White) && finish.rank = 8) ||
+  (Game_state.get_square board start = (Pawn,Black) && finish.rank = 1)
+
+
 
 
 let move_is_legal board start finish = (piece_legality board start finish || detect_castle board start finish) && 
@@ -199,15 +204,40 @@ let attempt_move_no_checks board start finish =
     in
     (Game_state.set_square board_with_piece_removed finish the_piece,Game_state.Legal,Game_state.get_square board finish)
 
+let attempt_move_no_checks_then_promote board start finish piece =
+  if detect_castle board start finish
+  then castle board start finish else 
+    let the_piece = piece in
+    let board_with_piece_removed =
+      Game_state.set_square board start (Empty, NoPiece)
+    in
+    (Game_state.set_square board_with_piece_removed finish the_piece,Game_state.Legal,Game_state.get_square board finish)
+
+let rec ask_promotion board =
+  print_string  "You are attempting to promote a Pawn. Choose a piece: type Q, R, B, or N for a Queen, Rook, Bishop, or Knight";
+  let promoted_string = read_line () in 
+  match promoted_string with 
+  |"Q" -> (Queen,Game_state.color_to_move board)
+  |"R" -> (Rook,Game_state.color_to_move board)
+  |"B" -> (Bishop,Game_state.color_to_move board)
+  |"N" -> (Knight,Game_state.color_to_move board)
+  |_ -> ask_promotion board
+
 (**[attempt_move board board_coord board_coord] validates all board
    considerations (checks, blocked pieces, castling ect.)
    Returns[board, Legal] if the move is allowed*)
 let attempt_move board start finish = 
 
+
   if move_is_legal board start finish 
   then 
-    let board_castle_availablility_adjusted = update_castle_availability board start finish in
-    attempt_move_no_checks board_castle_availablility_adjusted start finish 
+    if detect_promotion board start finish 
+    then let promote_piece = ask_promotion board in
+      let board_castle_availablility_adjusted = update_castle_availability board start finish in
+      attempt_move_no_checks_then_promote board_castle_availablility_adjusted start finish promote_piece
+    else 
+      let board_castle_availablility_adjusted = update_castle_availability board start finish in
+      attempt_move_no_checks board_castle_availablility_adjusted start finish 
   else (board,Game_state.Illegal,(Empty,NoPiece))
 
 (*let attempt_move = attempt_move_no_checks*)
