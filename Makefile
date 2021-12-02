@@ -19,8 +19,21 @@ zip:
 	rm -f chess.zip
 	zip -r chess.zip . -x@exclude.lst
 
-doc:
-	dune build @doc		
+docs:
+	dune build @doc	
+
+bisect: bisect-clean
+	-dune exec --instrument-with bisect_ppx --force test/main.exe
+	bisect-ppx-report html
+
+bisect-clean:
+	rm -rf _coverage bisect*.coverage
+
+
+
+clean: bisect-clean
+	dune clean
+	rm -f search.zip
 
 loc:
 	ocamlbuild -clean
