@@ -39,6 +39,8 @@ let read_file filename =
 let rec list_to_string b =
   match b with [] -> "" | h :: t -> h ^ "\n" ^ list_to_string t
 
+(* Excecutes a move on the board and creates a tuple containing the
+   board before, the board after, and the expected board after.*)
 let check_move curr_fen next_fen move =
   let m = Gameplay.check move in
   let curr_board = Game_state.get_board_from_FEN curr_fen in
@@ -72,6 +74,8 @@ let check_move_test =
 
 let t_output = (true, "", [], [], [])
 
+(* Generates a list of checks from a sequential list of FEN strings and
+   moves*)
 let rec get_checks data =
   match data with
   | [ before; move; after ] -> [ (move, before, after, move) ]
@@ -79,11 +83,13 @@ let rec get_checks data =
       (move, before, after, move) :: get_checks (after :: t)
   | _ -> []
 
+(* Converts a list of tuple checks into a list of ounit tests*)
 let generate_move_tests lst =
   lst
   |> List.map (fun (n, b, a, m) -> (n, check_move b a m))
   |> List.map (fun (n, m) -> check_move_test n t_output m)
 
+(* Load game data from a file, then convert it to ounit tests*)
 let game_one =
   read_file "./test/data/game_one.csv"
   |> List.map (fun a -> String.split_on_char ',' a)
@@ -91,6 +97,8 @@ let game_one =
 
 let game_one_tests = game_one |> get_checks
 
+(* Test cases for illegal moves. The move should be rejected and the
+   same board should be returned.*)
 let illegal_move_tests =
   [
     ( "Empty start square",
@@ -135,18 +143,19 @@ let illegal_move_tests =
       "H2 F3" );
   ]
 
+(* Test cases for rare moves, possibly missed in fully game testing.*)
 let edge_case_moves =
   [
     ( "En passant",
       "7k/8/8/3pP3/8/8/8/K7 w - d6 0 1",
       "7k/8/3P4/8/8/8/8/K7 w - - 0 1",
       "E5 D6" );
-    ( "Promotion to queen",
-      "7k/3P4/8/8/8/8/8/K7 w - - 0 1",
-      "3Q3k/8/8/8/8/8/8/K7 w - - 0 1",
-      "D7 D8" );
+    (* Causes test suite to ask for input in the middle of running (
+       "Promotion to queen", "7k/3P4/8/8/8/8/8/K7 w - - 0 1",
+       "3Q3k/8/8/8/8/8/8/K7 w - - 0 1", "D7 D8" );*)
   ]
 
+(* Combine all game state tests into one list*)
 let game_state_tests =
   List.flatten [ game_one_tests; illegal_move_tests; edge_case_moves ]
   |> generate_move_tests
