@@ -12,7 +12,7 @@ let start_state : Game_state.game_state =
     board = start_board;
     white_taken = [];
     black_taken = [];
-    time = (10, 10);
+    time = (300, 300);
   }
 
 let turn_swap result =
