@@ -72,13 +72,6 @@ let check_move_test =
 
 let t_output = (true, "", [], [], [])
 
-(*let moves_to_check = [ ( "Pawn move",
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-  "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1", "E2 E4"
-  ); ( "Bishop move", "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b
-  KQkq e3 0 1", "rnbqkbnr/pppppppp/8/1B6/4P3/8/PPPP1PPP/RNBQK1NR b KQkq
-  - 0 1", "F1 B5" ); ]*)
-
 let rec get_checks data =
   match data with
   | [ before; move; after ] -> [ (move, before, after, move) ]
@@ -120,10 +113,42 @@ let illegal_move_tests =
       "rnbqkbnr/pppppppp/8/8/1BB1P3/3PQ3/PPP2PPP/RN2KN1R w kq - 0 1",
       "rnbqkbnr/pppppppp/8/8/1BB1P3/3PQ3/PPP2PPP/RN2KN1R w kq - 0 1",
       "E1 G1" );
+    ( "King side castle with check in the way",
+      "rnb1kbnr/pppppppp/8/1q6/1B1PP3/1B2Q1N1/PPP2PPP/RN2K2R w KQkq - \
+       0 1",
+      "rnb1kbnr/pppppppp/8/1q6/1B1PP3/1B2Q1N1/PPP2PPP/RN2K2R w KQkq - \
+       0 1",
+      "E1 G1" );
+    ( "Queen side castle with check in the way",
+      "rnb1kbnr/pppppppp/8/8/1B1PP1q1/1B1NQ1N1/PPP2PPP/R3K2R w KQkq - \
+       0 1",
+      "rnb1kbnr/pppppppp/8/8/1B1PP1q1/1B1NQ1N1/PPP2PPP/R3K2R w KQkq - \
+       0 1",
+      "E1 C1" );
+    ( "Move into check",
+      "7k/6r1/8/8/8/8/7P/7K w - - 0 1",
+      "7k/6r1/8/8/8/8/7P/7K w - - 0 1",
+      "H1 G1" );
+    ( "Move piece causes check",
+      "7k/7r/8/8/8/8/7N/7K w - - 0 1",
+      "7k/7r/8/8/8/8/7N/7K w - - 0 1",
+      "H2 F3" );
+  ]
+
+let edge_case_moves =
+  [
+    ( "En passant",
+      "7k/8/8/3pP3/8/8/8/K7 w - d6 0 1",
+      "7k/8/3P4/8/8/8/8/K7 w - - 0 1",
+      "E5 D6" );
+    ( "Promotion to queen",
+      "7k/3P4/8/8/8/8/8/K7 w - - 0 1",
+      "3Q3k/8/8/8/8/8/8/K7 w - - 0 1",
+      "D7 D8" );
   ]
 
 let game_state_tests =
-  List.flatten [ game_one_tests; illegal_move_tests ]
+  List.flatten [ game_one_tests; illegal_move_tests; edge_case_moves ]
   |> generate_move_tests
 
 (** Construct OUnit tests for Gameplay*)
