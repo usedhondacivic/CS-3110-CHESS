@@ -38,10 +38,6 @@ let check start_end =
   | [ hd; tl ] -> { start = hd; next = tl }
   | _ :: _ -> failwith "new input needed"
 
-let get_start start_end =
-  let input_move = check start_end in
-  input_move.start
-
 let rec take_move s =
   let _ = print_endline "Where would you like to move? (Ex: A4 A6): " in
   let s = read_line () in
@@ -59,3 +55,14 @@ let print_time color state exec_time =
   | Game_state.Black -> (
       match Game_state.get_time state with a, b -> (a, b - exec_time))
   | Game_state.NoPiece -> failwith "not meet procondition"
+
+let check_end move =
+  match move with End -> false | Valid { start = _; next = _ } -> true
+
+let return_start move start =
+  match move with
+  | Valid { start = a; next = b } -> if start = true then a else b
+  | _ -> failwith "not meet precondition"
+
+let still_time time =
+  match time with w, b -> if w > 0 && b > 0 then true else false
