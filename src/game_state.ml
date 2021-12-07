@@ -60,8 +60,8 @@ type board = {
     the last pawn advance or piece capture. When this number reaches 100
     the game ends in a draw.*)
   full_move_count : int;
-      (*[full_move_count] is the number of completed turns in the
-        game.*)
+  (*[full_move_count] is the number of completed turns in the
+    game.*)
 }
 
 type game_state = {
@@ -91,11 +91,11 @@ let set_square (curr_board : board) coord piece =
     game_board =
       List.mapi
         (fun rank lst ->
-          if rank + 1 = coord.rank then
-            List.mapi
-              (fun file p -> if file + 1 = coord.file then piece else p)
-              lst
-          else lst)
+           if rank + 1 = coord.rank then
+             List.mapi
+               (fun file p -> if file + 1 = coord.file then piece else p)
+               lst
+           else lst)
         curr_board.game_board;
   }
 
@@ -109,10 +109,10 @@ let swap_turn (curr_board : board) =
     curr_board with
     current_turn =
       (match curr_board.current_turn with
-      | White -> Black
-      | Black -> White
-      | NoPiece ->
-          failwith "Invalid board: current_turn must be White or Black.");
+       | White -> Black
+       | Black -> White
+       | NoPiece ->
+         failwith "Invalid board: current_turn must be White or Black.");
   }
 
 let get_king curr_board color =
@@ -121,28 +121,35 @@ let get_king curr_board color =
 let get_castle_availability curr_board color =
   match color with
   | White ->
-      let x, _ = curr_board.castle_availability in
-      x
+    let x, _ = curr_board.castle_availability in
+    x
   | Black ->
-      let _, x = curr_board.castle_availability in
-      x
+    let _, x = curr_board.castle_availability in
+    x
   | NoPiece -> failwith "Can't get castle availability of NoPiece"
+
 
 let set_castle_availability curr_board color new_rights =
   match color with
   | White ->
-      {
-        curr_board with
-        castle_availability =
-          (new_rights, get_castle_availability curr_board Black);
-      }
+    {
+      curr_board with
+      castle_availability =
+        (new_rights, get_castle_availability curr_board Black);
+    }
   | Black ->
-      {
-        curr_board with
-        castle_availability =
-          (get_castle_availability curr_board White, new_rights);
-      }
+    {
+      curr_board with
+      castle_availability =
+        (get_castle_availability curr_board White, new_rights);
+    }
   | NoPiece -> failwith "Can't set castle availability of NoPiece"
+
+let get_en_passant_target curr_board  = 
+  curr_board.en_passant_target
+
+let set_en_passant_target curr_board boord_coord_opt  = 
+  {curr_board with en_passant_target = boord_coord_opt}
 
 let get_piece str =
   match str with
@@ -184,10 +191,10 @@ let reverse lst = List.fold_left (fun lrev b -> b :: lrev) [] lst
 let rec build_row row lst =
   match lst with
   | x :: t when int_of_char x >= 49 && int_of_char x <= 56 ->
-      build_row
-        (Util.build_list (int_of_char x - 48) (Empty, White) @ row)
-        t
-      (*ewwwww*)
+    build_row
+      (Util.build_list (int_of_char x - 48) (Empty, White) @ row)
+      t
+  (*ewwwww*)
   | h :: t -> build_row (get_piece h :: row) t
   | [] -> row
 
@@ -207,9 +214,9 @@ let color_from_string = function
 
 let castle_rights_from_string str =
   ( {
-      king_side = String.contains str 'K';
-      queen_side = String.contains str 'Q';
-    },
+    king_side = String.contains str 'K';
+    queen_side = String.contains str 'Q';
+  },
     {
       king_side = String.contains str 'k';
       queen_side = String.contains str 'q';
@@ -218,7 +225,7 @@ let castle_rights_from_string str =
 let en_passant_from_string str =
   match Util.explode str with
   | [ r; f ] ->
-      Some { rank = int_of_char r - 96; file = int_of_char f - 48 }
+    Some { rank = int_of_char r - 96; file = int_of_char f - 48 }
   | [ '-' ] -> None
   | _ -> failwith "Illegal FEN string: malformed en_passant target"
 
@@ -226,14 +233,14 @@ let get_board_from_FEN fen_str =
   let split_fen =
     match String.split_on_char ' ' fen_str with
     | [ p; t; c; e; f; h ] ->
-        {
-          position = p;
-          turn = t;
-          castle = c;
-          en_passant = e;
-          full_move = f;
-          half_move = h;
-        }
+      {
+        position = p;
+        turn = t;
+        castle = c;
+        en_passant = e;
+        full_move = f;
+        half_move = h;
+      }
     | _ -> failwith "Invalid FEN string"
   in
   let broken = reverse (String.split_on_char '/' split_fen.position) in

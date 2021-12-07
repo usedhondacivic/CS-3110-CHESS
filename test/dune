@@ -1,5 +1,3 @@
 (executable
  (name main)
- (libraries Chess ounit2)
- (instrumentation
-  (backend bisect_ppx)))
+ (libraries Chess ounit2))

@@ -1,5 +1,6 @@
 (** [game_state] holds information about the board and the current state
-    of the game. *)
+    of the game, as well as methods to generate new states with given
+    modifications. *)
 
 (** [piece] represents possible chess pieces. *)
 type piece =
@@ -15,6 +16,8 @@ type castle_rights = {
   king_side : bool;
   queen_side : bool;
 }
+(** [castle_rights] represents a colors ability to castle to either side
+    of the board.*)
 
 type time = int * int
 (** [time] represents the current time of the game's chess clock. White
@@ -56,13 +59,17 @@ type result =
   | Illegal
 
 val get_time : game_state -> time
+(** [get_time] is the current time remaining for both players*)
 
 val set_time : game_state -> time -> game_state
+(** [set_time] is an updated game_state with a give time on the clock*)
 
 val set_square : board -> board_coord -> piece * color -> board
+(** [set_square] is the board with the given square changed to the given
+    piece*)
 
 val get_square : board -> board_coord -> piece * color
-(** [from_location] the piece that on the board at the given coordinate *)
+(** [get_square] is the piece on the board at the given coordinate *)
 
 val move_piece : board -> board_coord -> board_coord -> board
 (** [move_piece] returns a board representing the result of a move *)
@@ -77,6 +84,14 @@ val get_castle_availability : board -> color -> castle_rights
 val set_castle_availability : board -> color -> castle_rights -> board
 (** [set_castle_availability] returns a board with*)
 
+val get_en_passant_target : board -> board_coord option
+(**[get_en_passant_target is Some board coodinate that can be attacked by en 
+   passant or None] *)
+
+val set_en_passant_target : board -> board_coord option -> board
+(**[set_en_passant_target] returns a board with an updated en passant target 
+   option*)
+
 val get_board_from_FEN : string -> board
 (** [get_board_from_FEN] returns a board representing a FEN string. *)
 
@@ -84,5 +99,10 @@ val color_to_move : board -> color
 (** [color_to_move] returns the color of the current player. *)
 
 val board_to_list : board -> string list
+(** [board_to_list] is the board in a a string list representation,
+    using the standard letter convention for the pieces*)
 
 val compare_game_board : board -> board -> bool
+(** [compare_game_board] is true if board_to_list generates the same
+    list. Only checks for piece location, doesn't check things like
+    castle availability or en passant target.*)

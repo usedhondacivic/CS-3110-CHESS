@@ -1,6 +1,6 @@
+open Chess
 (** Code to start gameplay will go here *)
 
-open Chess
 open Unix
 
 let start_board =
@@ -12,7 +12,11 @@ let start_state : Game_state.game_state =
     board = start_board;
     white_taken = [];
     black_taken = [];
+<<<<<<< HEAD
     time = (300, 300);
+=======
+    time = (1000, 1000);
+>>>>>>> 7a8274c753fdfdb8b19fc26eebb3a1422c72662f
   }
 
 let turn_swap result =
