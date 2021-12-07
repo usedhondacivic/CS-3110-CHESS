@@ -64,8 +64,8 @@ let rec gameplay_loop (state : Game_state.game_state) =
       let taken_piece = snd result in
       let new_state = update_state state new_board taken_piece in
       gameplay_loop (Game_state.set_time new_state remain_time)
-    else Ui.show_end
-  else Ui.show_end
+    else Ui.show_end true
+  else Ui.show_end true
 
 let _ = Ui.show_start
 
