@@ -1,6 +1,6 @@
+open Chess
 (** Code to start gameplay will go here *)
 
-open Chess
 open Unix
 
 let start_board =
@@ -19,8 +19,8 @@ let turn_swap result =
   match result with
   | x, Game_state.Legal, p -> (Game_state.swap_turn x, p)
   | x, Game_state.Illegal, p ->
-    print_endline "Illegal move, please enter new move.";
-    (x, p)
+      print_endline "Illegal move, please enter new move.";
+      (x, p)
 
 let update_state (state : Game_state.game_state) new_board taken =
   match taken with
@@ -28,17 +28,17 @@ let update_state (state : Game_state.game_state) new_board taken =
   | x -> (
       match x with
       | p, Game_state.White ->
-        {
-          state with
-          board = new_board;
-          white_taken = p :: state.white_taken;
-        }
+          {
+            state with
+            board = new_board;
+            white_taken = p :: state.white_taken;
+          }
       | p, Game_state.Black ->
-        {
-          state with
-          board = new_board;
-          black_taken = p :: state.black_taken;
-        }
+          {
+            state with
+            board = new_board;
+            black_taken = p :: state.black_taken;
+          }
       | _ -> failwith "Cannot add piece of invalid color to taken.")
 
 let rec gameplay_loop (state : Game_state.game_state) =
