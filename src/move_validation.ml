@@ -111,7 +111,6 @@ let black_king_rook_moved = ref false
 
 
 
-
 let update_castle_availability_white board start finish=
   if Game_state.get_square board {rank = 1;file = 8} <> (Rook,White) then white_king_rook_moved := true;
   if Game_state.get_square board {rank = 1;file = 1} <> (Rook,White)  then white_queen_rook_moved := true;
@@ -187,31 +186,96 @@ let detect_promotion board start finish =
   (Game_state.get_square board start = (Pawn,White) && finish.rank = 8) ||
   (Game_state.get_square board start = (Pawn,Black) && finish.rank = 1)
 
+let string_of_piece piece =
+  match piece with
+  |King -> "K"
+  |Queen -> "Q"
+  |Bishop -> "B"
+  |Knight -> "N"
+  |Rook -> "R"
+  |Pawn -> "P"
+  |Empty -> "empty"
 
+let string_of_color color =
+  match color with
+  |White -> "White"
+  |Black -> "Black"
+  |NoPiece -> "NP"
 
+let piece_string a =
+  (string_of_piece (double_first a)) ^ " " ^ string_of_color (double_second a)
 
-let move_is_legal board start finish = (piece_legality board start finish || detect_castle board start finish) && 
-                                       (not (friendly_fire board start finish)) && 
-                                       clear_path (pieces_in_between board start finish) &&
+let en_passant_update_white board start finish = 
+  if  Game_state.get_square board start = (Pawn,White) && start.rank = 2 && finish.rank = 4 
+  then Game_state.set_en_passant_target board (Some {rank = 3;file = finish.file})
+  (* else failwith (piece_string (Game_state.get_square board start) ^ "srank: " ^ string_of_int start.rank ^ "frank: " ^ string_of_int finish.rank) *)
+  else Game_state.set_en_passant_target board None
+
+let en_passant_update_black board start finish = 
+  if (Game_state.get_square board start) = (Pawn,Black) && start.rank = 7 && finish.rank = 5 
+  then Game_state.set_en_passant_target board (Some {rank = 6;file = finish.file})
+  else Game_state.set_en_passant_target board None
+
+let en_passant_update  board start finish =
+  match color_to_move board with 
+  |White -> en_passant_update_white board start finish
+  |Black -> en_passant_update_black board start finish
+  |_ -> failwith("en_passant_update error")
+
+let start_rank_en_passant board =
+  match Game_state.color_to_move board with
+  |White -> 5
+  |Black -> 4
+  |_ -> failwith("start_rank_en_passant error")
+
+let correct_start_file_en_passant start target =
+  (start.file = target.file + 1) || (start.file = target.file - 1)
+
+let detect_en_passant board start finish =
+  match Game_state.get_en_passant_target board with
+  |None -> false
+  |Some target ->  target = finish && double_first (Game_state.get_square board start) = Pawn  
+                   && start.rank = start_rank_en_passant board && correct_start_file_en_passant start target
+
+let move_is_legal board start finish = (((piece_legality board start finish || detect_castle board start finish ) && 
+                                         (not (friendly_fire board start finish)) && 
+                                         clear_path (pieces_in_between board start finish)) || detect_en_passant board start finish) &&
                                        right_color board start
 (** [attempt_move_no_checks board start finish] creates the board assuming the move is valid*)
 let attempt_move_no_checks board start finish =
   if detect_castle board start finish
   then castle board start finish else 
     let the_piece = Game_state.get_square board start in
+    let board_with_updated_en_passant =  en_passant_update board start finish in
     let board_with_piece_removed =
-      Game_state.set_square board start (Empty, NoPiece)
+      Game_state.set_square board_with_updated_en_passant start (Empty, NoPiece)
     in
     (Game_state.set_square board_with_piece_removed finish the_piece,Game_state.Legal,Game_state.get_square board finish)
 
 let attempt_move_no_checks_then_promote board start finish piece =
   if detect_castle board start finish
   then castle board start finish else 
+    let board_with_updated_en_passant =  en_passant_update board start finish in
+
     let the_piece = piece in
     let board_with_piece_removed =
-      Game_state.set_square board start (Empty, NoPiece)
+      Game_state.set_square board_with_updated_en_passant start (Empty, NoPiece)
     in
     (Game_state.set_square board_with_piece_removed finish the_piece,Game_state.Legal,Game_state.get_square board finish)
+
+let attempt_move_no_checks_en_passant board start finish = 
+  let the_piece = Game_state.get_square board start in
+  let board_with_updated_en_passant =  en_passant_update board start finish in
+
+  let board_with_attacker_removed =
+    Game_state.set_square board_with_updated_en_passant start (Empty, NoPiece)
+  in
+  let board_without_victim =
+    Game_state.set_square board_with_attacker_removed {rank=start.rank;file = finish.file} (Empty, NoPiece)
+  in
+  (Game_state.set_square board_without_victim finish the_piece,Game_state.Legal,Game_state.get_square board {rank=start.rank;file = finish.file})
+
+
 
 let rec ask_promotion board =
   print_string  "You are attempting to promote a Pawn. Choose a piece: type Q, R, B, or N for a Queen, Rook, Bishop, or Knight";
@@ -223,11 +287,17 @@ let rec ask_promotion board =
   |"N" -> (Knight,Game_state.color_to_move board)
   |_ -> ask_promotion board
 
+let check_target board=
+  match Game_state.get_en_passant_target board with
+  |None  -> print_string "target = None" 
+  |Some x -> print_string  ("target rank = " ^ (string_of_int x.rank) ^ "target file = " ^ (string_of_int x.file))
+
+
+
 (**[attempt_move board board_coord board_coord] validates all board
    considerations (checks, blocked pieces, castling ect.)
    Returns[board, Legal] if the move is allowed*)
 let attempt_move board start finish = 
-
 
   if move_is_legal board start finish 
   then 
@@ -235,7 +305,9 @@ let attempt_move board start finish =
     then let promote_piece = ask_promotion board in
       let board_castle_availablility_adjusted = update_castle_availability board start finish in
       attempt_move_no_checks_then_promote board_castle_availablility_adjusted start finish promote_piece
-    else 
+    else if detect_en_passant board start finish
+    then attempt_move_no_checks_en_passant board start finish
+    else
       let board_castle_availablility_adjusted = update_castle_availability board start finish in
       attempt_move_no_checks board_castle_availablility_adjusted start finish 
   else (board,Game_state.Illegal,(Empty,NoPiece))

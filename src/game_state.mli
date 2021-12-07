@@ -84,6 +84,14 @@ val get_castle_availability : board -> color -> castle_rights
 val set_castle_availability : board -> color -> castle_rights -> board
 (** [set_castle_availability] returns a board with*)
 
+val get_en_passant_target : board -> board_coord option
+(**[get_en_passant_target is Some board coodinate that can be attacked by en 
+   passant or None] *)
+
+val set_en_passant_target : board -> board_coord option -> board
+(**[set_en_passant_target] returns a board with an updated en passant target 
+   option*)
+
 val get_board_from_FEN : string -> board
 (** [get_board_from_FEN] returns a board representing a FEN string. *)
 
