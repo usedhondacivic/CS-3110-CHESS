@@ -245,80 +245,79 @@ let show_end over =
       \  \n";
   print_endline "You lose!"
 
-let instructions =
-  let _ =
-    print_color light_color black_code
-      "\n\
-      \  This is a two player game. \n\n\
-      \  There are kinds of pieces:\n\
-      \  Pawn: ♟︎\n\
-      \  1.  On a Pawn’s first move, it can move forward one or two \
-       squares.\n\
-      \  2.  When capturing a piece (see description on back), a Pawn \
-       moves one square diagonally ahead.\n\
-      \  \n\
-      \  Knight: ♞ \n\
-      \  1.  Knights move three squares at a time: two spaces forward \
-       or backward, then one space left or right, or two spaces to the \
-       \t\n\
-      \  left or right, then one space forward or backward. \n\
-      \  2.  The move looks like the letter L. The Knight always ends \
-       up landing on a square opposite the color from which it started.\n\
-      \  \n\
-      \  Bishop: ♝\n\
-      \  1.  Bishops moves diagonally as many open squares as you like. \n\
-      \  2.  The Bishop must remain on the same color square as it \
-       started the game on. \n\
-      \  \n\
-      \  Rook: ♜\n\
-      \  1.  Rook moves in a straight line, horizontally or vertically \
-       as many open squares as you like.\n\
-      \  Besides the Queen, the Rook is the next most powerful Play \
-       Piece\n\
-      \  \n\
-      \  Queen: ♛\n\
-      \  1.  Queen is the most powerful of the Play Pieces. \n\
-      \  2.  The Queen moves in any direction (horizontally, \
-       vertically or diagonally) as many open squares as you like. \n\
-      \  \n\
-      \  King: ♚\n\
-      \  1.  King is the most important Play Piece, because if it \
-       becomes trapped, you’ll lose the game.\n\
-      \  2.  The King moves one square in any direction, as long as it \
-       doesn’t put itself in Check\n\n\
-      \  Check: \n\
-      \  You are in Check if an opponent’s Play Piece is in a position \
-       on the board to capture your King.\n\
-      \  To save your King from Check you must do one of the following:\n\
-      \  1. Move the King out of the way of the opponent’s Play Piece\n\
-      \  2. Move another one of your Play Pieces to block your opponent\n\
-      \  3. Capture the opponent’s Play Piece that is threatening your \
-       King\n\n\
-      \  Checkmate: ♚\n\
-      \  When your King cannot be saved from Check, it’s called \
-       Checkmate and you lost the game. \n\n\
-      \  Capturing:\n\
-      \  When you move one of your Play Pieces and it ends on an \
-       opponent’s Play Piece, you capture\n\
-      \  it and remove it from the Game Board\n\n\
-      \  Castling: ♜♚ -> ♚♜\n\
-      \  This is a special move for the King and either Rook and is \
-       the only time two Play Pieces can\n\
-      \  move on one turn. It helps to protect the King and positions \
-       the Rook toward the center of the Game Board.\n\
-      \  To castle, slide the Rook to the space next to the King. Move \
-       the King to the other side of the Rook. \n\
-      \  To castle:\n\
-      \  1. This must be the first move for both the King and the Rook.\n\
-      \  2. No other Play Pieces can be between the King and the Rook.\n\
-      \  3. The King can’t be in Check, either before or after the \
-       castle. \n\
-      \  4. The King can’t be in Check on any of the spaces that it \
-       passes over during the castle.\n\n\
-      \  Winning: |♚|\n\
-      \  If you put your opponent’s King in Check so he can’t escape, \
-       call Checkmate… you win!\n\
-      \  \n\
-      \  "
-  in
-  print_endline "Let's play!"
+let instructions () =
+  print_color light_color black_code
+    "\n\
+    \  This is a two player game. \n\n\
+    \  There are kinds of pieces:\n\
+    \  Pawn: ♟︎\n\
+    \  1.  On a Pawn’s first move, it can move forward one or two \
+     squares.\n\
+    \  2.  When capturing a piece (see description on back), a Pawn \
+     moves one square diagonally ahead.\n\
+    \  \n\
+    \  Knight: ♞ \n\
+    \  1.  Knights move three squares at a time: two spaces forward or \
+     backward, then one space left or right, or two spaces to the \t\n\
+    \  left or right, then one space forward or backward. \n\
+    \  2.  The move looks like the letter L. The Knight always ends up \
+     landing on a square opposite the color from which it started.\n\
+    \  \n\
+    \  Bishop: ♝\n\
+    \  1.  Bishops moves diagonally as many open squares as you like. \n\
+    \  2.  The Bishop must remain on the same color square as it \
+     started the game on. \n\
+    \  \n\
+    \  Rook: ♜\n\
+    \  1.  Rook moves in a straight line, horizontally or vertically \
+     as many open squares as you like.\n\
+    \  Besides the Queen, the Rook is the next most powerful Play Piece\n\
+    \  \n\
+    \  Queen: ♛\n\
+    \  1.  Queen is the most powerful of the Play Pieces. \n\
+    \  2.  The Queen moves in any direction (horizontally, vertically \
+     or diagonally) as many open squares as you like. \n\
+    \  \n\
+    \  King: ♚\n\
+    \  1.  King is the most important Play Piece, because if it \
+     becomes trapped, you’ll lose the game.\n\
+    \  2.  The King moves one square in any direction, as long as it \
+     doesn’t put itself in Check\n\n\
+    \  Check: \n\
+    \  You are in Check if an opponent’s Play Piece is in a position \
+     on the board to capture your King.\n\
+    \  To save your King from Check you must do one of the following:\n\
+    \  1. Move the King out of the way of the opponent’s Play Piece\n\
+    \  2. Move another one of your Play Pieces to block your opponent\n\
+    \  3. Capture the opponent’s Play Piece that is threatening your \
+     King\n\n\
+    \  Checkmate: ♚\n\
+    \  When your King cannot be saved from Check, it’s called \
+     Checkmate and you lost the game. \n\n\
+    \  Capturing:\n\
+    \  When you move one of your Play Pieces and it ends on an \
+     opponent’s Play Piece, you capture\n\
+    \  it and remove it from the Game Board\n\n\
+    \  Castling: ♜♚ -> ♚♜\n\
+    \  This is a special move for the King and either Rook and is the \
+     only time two Play Pieces can\n\
+    \  move on one turn. It helps to protect the King and positions \
+     the Rook toward the center of the Game Board.\n\
+    \  To castle, slide the Rook to the space next to the King. Move \
+     the King to the other side of the Rook. \n\
+    \  To castle:\n\
+    \  1. This must be the first move for both the King and the Rook.\n\
+    \  2. No other Play Pieces can be between the King and the Rook.\n\
+    \  3. The King can’t be in Check, either before or after the \
+     castle. \n\
+    \  4. The King can’t be in Check on any of the spaces that it \
+     passes over during the castle.\n\n\
+    \  Winning: |♚|\n\
+    \  If you put your opponent’s King in Check so he can’t escape, \
+     call Checkmate… you win!\n\
+    \  \n\
+     Let's play!\n\n\
+    \      Press [ENTER] to continue.\n\
+    \        ";
+  let _ = read_line () in
+  ()

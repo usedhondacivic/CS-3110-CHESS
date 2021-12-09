@@ -21,8 +21,6 @@ let print_tuples = function
 
 (** Construct OUnit tests for Game_state*)
 
-(* http://www.lutanho.net/pgn/pgn2fen.html*)
-
 (*https://stackoverflow.com/questions/5774934/how-do-i-read-in-lines-from-a-text-file-in-ocaml*)
 let read_file filename =
   let lines = ref [] in
@@ -39,8 +37,9 @@ let read_file filename =
 let rec list_to_string b =
   match b with [] -> "" | h :: t -> h ^ "\n" ^ list_to_string t
 
-(* Excecutes a move on the board and creates a tuple containing the
-   board before, the board after, and the expected board after.*)
+(* Excecutes a move on the board and creates a tuple containing the a
+   comparison of the two boards, the board before, the board after, and
+   the expected board after.*)
 let check_move curr_fen next_fen move =
   let m = Gameplay.check move in
   let curr_board = Game_state.get_board_from_FEN curr_fen in

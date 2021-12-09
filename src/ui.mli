@@ -13,3 +13,6 @@ val show_end : bool -> unit
 val print_color : int -> int -> string -> unit
 (** [print_color] adds the relevant ANSI strings to display text with
     the given color and background.*)
+
+val instructions : unit -> unit
+(** [instructions] prints a how to play screen*)
