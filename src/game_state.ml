@@ -114,9 +114,32 @@ let swap_turn (curr_board : board) =
        | NoPiece ->
          failwith "Invalid board: current_turn must be White or Black.");
   }
+let rec index_of_list lst x acc =
+  match lst with
+  |[] -> failwith("not there")
+  |h::t-> if h = x then acc else index_of_list t x acc+1
 
-let get_king curr_board color =
-  failwith "get_king has not been implemented."
+let index_to_coord i =
+  match i with
+  |a when a > 64 -> failwith("too big")
+  |a when a > 56 -> {rank = 8;file = a-55}
+  |a when a > 48 -> {rank = 7;file = a-47}
+  |a when a > 40 -> {rank = 6;file = a-39}
+  |a when a > 32 -> {rank = 5;file = a-31}
+  |a when a > 24 -> {rank = 4;file = a-23}
+  |a when a > 16 -> {rank = 3;file = a-15}
+  |a when a > 8 -> {rank = 2;file = a-7}
+  |a when a > 0 -> {rank = 1;file = a+1}
+  |_ -> failwith("too small")
+
+
+let rec get_king curr_board color =
+  let board = curr_board.game_board in
+  let flat_board =List.flatten board in
+  let index = index_of_list flat_board (King,color) 0 in
+  let king =index_to_coord index in
+  king
+
 
 let get_castle_availability curr_board color =
   match color with
