@@ -11,6 +11,35 @@ open Ui
    2)game_play, 3)move_validation, 4)piece. Manually tested : 1)ui Piece
    is tested using Glass-Box testing. *)
 
+(* TEST PLAN: The test suite test the following modules:
+
+   [Game_state]
+
+   The game state test cases are formed from a before state, a move to
+   attempt, and an expected after state. The case if the program
+   generates the correct after state when fed the move from a case.
+
+   Because the correctness of the state relies on the correctness of the
+   entire program (except UI), we chose to test using black box testing
+   to lower complexity.
+
+   The test cases were broken down into three categories:
+
+   Full game testing: We took entire games that were played on Chess.com
+   and converted them into data that is read by the test suite. The
+   suite compares the moves / states from the real game with those
+   produced by our program given the same moves.
+
+   Edge case moves: Moves that are less common in games and could be
+   missed in the full game testing.
+
+   Illegal moves: All the moves from the games we pulled are necessarily
+   legal. We also need to test that our program rejects moves that are
+   illegal. To do so, we attempt to make an illegal move and check that
+   the game state doesn't change.
+
+   [Game_play] *)
+
 (**Print tuple for testing *)
 let print_tuples = function
   | {
