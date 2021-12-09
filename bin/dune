@@ -1,3 +1,5 @@
 (executable
  (name main)
- (libraries Chess lwt.unix))
+ (libraries Chess lwt.unix)
+ (instrumentation
+  (backend bisect_ppx)))
