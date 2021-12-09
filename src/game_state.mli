@@ -58,6 +58,9 @@ type result =
   | Legal
   | Illegal
 
+(**[get_king] is the board voordinate with the king of the inputted color *)
+val get_king : board -> color -> board_coord
+
 val get_time : game_state -> time
 (** [get_time] is the current time remaining for both players*)
 
