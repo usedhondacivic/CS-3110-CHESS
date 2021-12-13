@@ -6,18 +6,13 @@ open Move_validation
 open Piece
 open Ui
 
-(**Test Plan: The test suite tests the modules: game_state, game_play,
-   move_validation, piece and ui. Tested in OUnit: 1)game_state,
-   2)game_play, 3)move_validation, 4)piece. Manually tested : 1)ui Piece
-   is tested using Glass-Box testing. *)
-
 (* TEST PLAN: The test suite test the following modules:
 
-   [Game_state]
+   [Game_state and Move_validation]
 
-   The game state test cases are formed from a before state, a move to
-   attempt, and an expected after state. The case if the program
-   generates the correct after state when fed the move from a case.
+   These test cases are formed from a before state, a move to attempt,
+   and an expected after state. The case passes if the program generates
+   the correct after state when fed the move from a case.
 
    Because the correctness of the state relies on the correctness of the
    entire program (except UI), we chose to test using black box testing
@@ -25,20 +20,45 @@ open Ui
 
    The test cases were broken down into three categories:
 
-   Full game testing: We took entire games that were played on Chess.com
-   and converted them into data that is read by the test suite. The
-   suite compares the moves / states from the real game with those
-   produced by our program given the same moves.
+   Full game testing: We took entire games played on Chess.com and
+   converted them into data that is read by the test suite. The suite
+   compares the moves / states from the real game with those produced by
+   our program when fed the same moves.
 
    Edge case moves: Moves that are less common in games and could be
    missed in the full game testing.
 
-   Illegal moves: All the moves from the games we pulled are necessarily
+   Illegal moves: All the moves from the Chess.com are necessarily
    legal. We also need to test that our program rejects moves that are
    illegal. To do so, we attempt to make an illegal move and check that
    the game state doesn't change.
 
-   [Game_play] *)
+   [Game_play]
+
+   We use black box testing to test a variety of edge cases surrounding
+   move inputs. We test moves that are off the board in both rank and
+   file, and we check that uppercase and lowercase letters are excepted.
+   Finally, we test several increments of the game clock, and check that
+   the state is updated accordingly.
+
+   [Piece]
+
+   We use black box testing and check that pieces generate their correct
+   movements from two different starting squares. Ensures that extreme
+   edgecase moves (ie moving a pawn all the way across the board) aren't
+   allowed. This makes edge case testing easier in Game_state by letting
+   us assume that the pieces follow their movement patterns.
+
+   [Ui]
+
+   Ui is tested manually, because automated tests would be both
+   difficult and less effective. Playing a quick game serves to both
+   manually check the Ui while also testing the system as a whole.
+
+   [The entire program]
+
+   We played many games using our program, checking that it behaved as
+   expected. *)
 
 (**Print tuple for testing *)
 let print_tuples = function
@@ -48,7 +68,7 @@ let print_tuples = function
     } ->
       Printf.sprintf "%i, %i, %i, %i;" s_r f_r n_r n_f
 
-(** Construct OUnit tests for Game_state*)
+(** Construct OUnit tests for Game_state and Move_validation*)
 
 (*https://stackoverflow.com/questions/5774934/how-do-i-read-in-lines-from-a-text-file-in-ocaml*)
 let read_file filename =
@@ -258,14 +278,7 @@ let gameplay_tests =
       20 (212, 230);
   ]
 
-(** Construct OUnit tests for Move_validation*)
-let move_validation_tests = [ (* TODO: add your tests here *) ]
-
 (** Construct OUnit tests for Piece*)
-let piece_tests = [ (* TODO: add your tests here *) ]
-
-(** Construct OUnit tests for Ui*)
-
 let rec print_tup = function a, b -> Printf.sprintf "%i, %i" a b
 
 let rec print_tuple_list = function
@@ -426,17 +439,10 @@ let moves_tests =
       [ (2, 5); (6, 3); (2, 3); (6, 5); (3, 6); (5, 2); (3, 2); (5, 6) ];
   ]
 
-let ui_tests = moves_tests
+let piece_tests = moves_tests
 
 let suite =
   "test suite for Chess"
-  >::: List.flatten
-         [
-           game_state_tests;
-           gameplay_tests;
-           move_validation_tests;
-           piece_tests;
-           ui_tests;
-         ]
+  >::: List.flatten [ game_state_tests; gameplay_tests; piece_tests ]
 
 let _ = run_test_tt_main suite
