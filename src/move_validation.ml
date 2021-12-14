@@ -16,6 +16,25 @@ let same_second a b = snd a = snd b
 let equal_tuple a b =
   same_first a b && same_second a b
 
+let string_of_piece piece =
+  match piece with
+  |King -> "K"
+  |Queen -> "Q"
+  |Bishop -> "B"
+  |Knight -> "N"
+  |Rook -> "R"
+  |Pawn -> "P"
+  |Empty -> "empty"
+
+let string_of_color color =
+  match color with
+  |White -> "White"
+  |Black -> "Black"
+  |NoPiece -> "NP"
+
+let piece_string a =
+  (string_of_piece (fst a)) ^ " " ^ string_of_color (snd a)
+
 let rec pieces_in_between_same_rank_helper board s f =
   match (s.file,f.file) with
   |(a,b) when a>b -> get_square board s :: pieces_in_between_same_rank_helper board {rank = s.rank; file = s.file-1} f
@@ -23,7 +42,7 @@ let rec pieces_in_between_same_rank_helper board s f =
   |(a,b) when a = b -> []
   |(_,_) -> failwith("pieces_in_between_same_rank failure")
 
-let pieces_in_between_same_rank board start finish= List.tl (pieces_in_between_same_rank_helper board start finish)
+let pieces_in_between_same_rank board start finish= try List.tl (pieces_in_between_same_rank_helper board start finish) with Failure _ ->[]
 
 
 let rec pieces_in_between_same_file_helper board s f =
@@ -33,18 +52,18 @@ let rec pieces_in_between_same_file_helper board s f =
   |(a,b) when a = b -> []
   |(_,_) -> failwith("pieces_in_between_same_file failure")
 
-let pieces_in_between_same_file board start finish= List.tl (pieces_in_between_same_file_helper board start finish)
+let pieces_in_between_same_file board start finish= try List.tl (pieces_in_between_same_file_helper board start finish) with Failure _ ->[]
 
 let rec pieces_in_between_diagonal_helper board s f =
   match (s.rank,f.rank,s.file,f.file) with
   |(a,b,c,d) when a>b && c>d-> get_square board s :: pieces_in_between_same_file_helper board {rank = s.rank -1; file = s.file -1} f
-  |(a,b,c,d) when a<b && c<d -> get_square board s :: pieces_in_between_same_file_helper board {rank = s.rank + 1; file = s.file + 1} f
+  |(a,b,c,d) when a<b && c<d-> get_square board s :: pieces_in_between_same_file_helper board {rank = s.rank +1; file = s.file +1} f
   |(a,b,c,d) when a>b && c<d-> get_square board s :: pieces_in_between_same_file_helper board {rank = s.rank -1; file = s.file +1} f
   |(a,b,c,d) when a<b && c>d-> get_square board s :: pieces_in_between_same_file_helper board {rank = s.rank +1; file = s.file -1} f
   |(a,b,c,d) when a = b && c =d -> []
   |(_,_,_,_) -> failwith("pieces_in_between_diagonal failure")
 
-let pieces_in_between_diagonal board start finish = List.tl (pieces_in_between_diagonal_helper board start finish)
+let pieces_in_between_diagonal board start finish = try List.tl (pieces_in_between_diagonal_helper board start finish) with Failure _ ->[]
 
 
 (**[pieces_in_between board start finish] returns the pieces in between start and finish if a knight is chosen as start, the empty list is returned, otherwise if a pieces is not on the same rank, file, or diagonal, a failure happens*)
@@ -92,6 +111,7 @@ let piece_legality board start finish =
   if  fst (Game_state.get_square board start) = Pawn then pawn_legality board start finish else
     let possible_moves = Piece.get_moves (fst (get_square board start))  (start.file,start.rank) in
     List.exists (equal_tuple (finish.file,finish.rank)) possible_moves
+
 let opposite_color color =
   match color with
   |White -> Black
@@ -126,7 +146,6 @@ let rec first_non_empty_piece_in_list alist =
   |[] -> (Empty,NoPiece)
 
 let check_above_king board king_square =
-  let k_rank = king_square.rank in
   let k_file = king_square.file in
   let opp_color = opposite_color (Game_state.color_to_move board) in
   let threat_piece = first_non_empty_piece_in_list (pieces_in_between_same_file board king_square {rank = 9; file = k_file}) in
@@ -136,7 +155,6 @@ let check_above_king board king_square =
   |_ -> false
 
 let check_below_king board king_square =
-  let k_rank = king_square.rank in
   let k_file = king_square.file in
   let opp_color = opposite_color (Game_state.color_to_move board) in
   let threat_piece = first_non_empty_piece_in_list (pieces_in_between_same_file board king_square {rank = 0; file = k_file}) in
@@ -147,7 +165,6 @@ let check_below_king board king_square =
 
 let check_left_king board king_square =
   let k_rank = king_square.rank in
-  let k_file = king_square.file in
   let opp_color = opposite_color (Game_state.color_to_move board) in
   let threat_piece = first_non_empty_piece_in_list (pieces_in_between_same_rank board king_square {rank = k_rank; file = 0}) in
   match threat_piece with
@@ -157,7 +174,6 @@ let check_left_king board king_square =
 
 let check_right_king board king_square =
   let k_rank = king_square.rank in
-  let k_file = king_square.file in
   let opp_color = opposite_color (Game_state.color_to_move board) in
   let threat_piece = first_non_empty_piece_in_list (pieces_in_between_same_rank board king_square {rank = k_rank; file = 9}) in
   match threat_piece with
@@ -186,18 +202,15 @@ let rec diagonal_end_finder_down_left coord =
   else diagonal_end_finder_down_left {rank = coord.rank-1; file = coord.file-1}
 
 let check_up_right_king board king_square =
-  let k_rank = king_square.rank in
-  let k_file = king_square.file in
   let opp_color = opposite_color (Game_state.color_to_move board) in
   let threat_piece = first_non_empty_piece_in_list (pieces_in_between_diagonal board king_square (diagonal_end_finder_up_right king_square)) in
+  (*print_string(piece_string threat_piece);*)
   match threat_piece with
   |(Queen, c) -> if c = opp_color then true else false
   |(Bishop, d) ->  if d = opp_color then true else false
   |_ -> false
 
 let check_up_left_king board king_square =
-  let k_rank = king_square.rank in
-  let k_file = king_square.file in
   let opp_color = opposite_color (Game_state.color_to_move board) in
   let threat_piece = first_non_empty_piece_in_list (pieces_in_between_diagonal board king_square (diagonal_end_finder_up_left king_square)) in
   match threat_piece with
@@ -206,8 +219,6 @@ let check_up_left_king board king_square =
   |_ -> false
 
 let check_down_left_king board king_square =
-  let k_rank = king_square.rank in
-  let k_file = king_square.file in
   let opp_color = opposite_color (Game_state.color_to_move board) in
   let threat_piece = first_non_empty_piece_in_list (pieces_in_between_diagonal board king_square (diagonal_end_finder_down_left king_square)) in
   match threat_piece with
@@ -216,8 +227,6 @@ let check_down_left_king board king_square =
   |_ -> false
 
 let check_down_right_king board king_square =
-  let k_rank = king_square.rank in
-  let k_file = king_square.file in
   let opp_color = opposite_color (Game_state.color_to_move board) in
   let threat_piece = first_non_empty_piece_in_list (pieces_in_between_diagonal board king_square (diagonal_end_finder_down_right king_square)) in
   match threat_piece with
@@ -267,12 +276,11 @@ let check_from_pawn board king_square =
 
   |NoPiece -> failwith("check from pawn error")
 
-let in_check board king_square = (*check_from_pawn board king_square||*)
-  (*check_from_king board king_square || *)
-  (*check_down_right_king board king_square ||
-    check_down_left_king board king_square || 
-    check_up_left_king board king_square ||
-    check_up_right_king board king_square ||  *)
+let in_check board king_square = (*
+  check_down_right_king board king_square ||
+  check_down_left_king board king_square || 
+  check_up_left_king board king_square ||*)
+  (*check_up_right_king board king_square ||*)
   check_from_pawn board king_square||
   check_from_king board king_square || 
   check_from_knight board king_square ||
@@ -366,24 +374,7 @@ let detect_promotion board start finish =
   (Game_state.get_square board start = (Pawn,White) && finish.rank = 8) ||
   (Game_state.get_square board start = (Pawn,Black) && finish.rank = 1)
 
-let string_of_piece piece =
-  match piece with
-  |King -> "K"
-  |Queen -> "Q"
-  |Bishop -> "B"
-  |Knight -> "N"
-  |Rook -> "R"
-  |Pawn -> "P"
-  |Empty -> "empty"
 
-let string_of_color color =
-  match color with
-  |White -> "White"
-  |Black -> "Black"
-  |NoPiece -> "NP"
-
-let piece_string a =
-  (string_of_piece (fst a)) ^ " " ^ string_of_color (snd a)
 
 let en_passant_update_white board start finish = 
   if  Game_state.get_square board start = (Pawn,White) && start.rank = 2 && finish.rank = 4 
