@@ -229,22 +229,23 @@ let check_from_king board king_square =
   let k_rank = king_square.rank in
   let k_file = king_square.file in
   let opp_color = opposite_color (Game_state.color_to_move board) in
-
-  if Game_state.get_square board {rank = k_rank + 1; file = k_file + 1} = (King, opp_color)
-  then true
-  else if Game_state.get_square board {rank = k_rank + 1; file = k_file + 0} = (King, opp_color)
-  then true
-  else if Game_state.get_square board {rank = k_rank + 1; file = k_file - 1} = (King, opp_color)
-  then true
-  else if Game_state.get_square board {rank = k_rank + 0; file = k_file - 1} = (King, opp_color)
-  then true
-  else if Game_state.get_square board {rank = k_rank - 1; file = k_file - 1} = (King, opp_color)
-  then true
-  else if Game_state.get_square board {rank = k_rank - 1; file = k_file + 0} = (King, opp_color)
-  then true
-  else if Game_state.get_square board {rank = k_rank - 1; file = k_file + 1} = (King, opp_color)
-  then true
-  else false
+  let a = if k_rank <= 7 && k_file <= 7 then Game_state.get_square board {rank = k_rank + 1; file = k_file + 1} = (King, opp_color)
+    else false in
+  let b = if k_rank <= 7 && k_file <= 8 then Game_state.get_square board {rank = k_rank + 1; file = k_file + 0} = (King, opp_color)
+    else false in
+  let c = if k_rank <= 7 && k_file >= 2 then Game_state.get_square board {rank = k_rank + 1; file = k_file - 1} = (King, opp_color)
+    else false in
+  let d = if k_rank <= 8 && k_file >= 2 then Game_state.get_square board {rank = k_rank + 0; file = k_file - 1} = (King, opp_color)
+    else false in
+  let e = if k_rank >= 2 && k_file >= 2 then Game_state.get_square board {rank = k_rank - 1; file = k_file - 1} = (King, opp_color)
+    else false in
+  let f = if k_rank >= 2 && k_file <= 8 then Game_state.get_square board {rank = k_rank - 1; file = k_file + 0} = (King, opp_color)
+    else false in
+  let g = if k_rank >= 2 && k_file <= 7 then Game_state.get_square board {rank = k_rank - 1; file = k_file + 1} = (King, opp_color)
+    else false in
+  let h = if k_rank <= 8 && k_file <= 7 then Game_state.get_square board {rank = k_rank - 0; file = k_file + 1} = (King, opp_color)
+    else false in
+  a||b||c||d||e||f||g||h
 
 let check_from_pawn board king_square = 
   let k_rank = king_square.rank in
@@ -270,11 +271,13 @@ let in_check board king_square = (*check_from_pawn board king_square||*)
   (*check_down_right_king board king_square ||
     check_down_left_king board king_square || 
     check_up_left_king board king_square ||
-    check_up_right_king board king_square ||  *)check_from_knight board king_square ||
-                                                check_below_king board king_square || 
-                                                check_above_king board king_square || 
-                                                check_right_king board king_square || 
-                                                check_left_king board king_square 
+    check_up_right_king board king_square ||  *)
+  check_from_king board king_square || 
+  check_from_knight board king_square ||
+  check_below_king board king_square || 
+  check_above_king board king_square || 
+  check_right_king board king_square || 
+  check_left_king board king_square 
 let right_color board start = 
   let the_piece = Game_state.get_square board start in
   (snd the_piece) = Game_state.color_to_move board
