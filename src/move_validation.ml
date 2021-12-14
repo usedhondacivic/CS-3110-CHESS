@@ -253,17 +253,18 @@ let check_from_pawn board king_square =
   let color =  (Game_state.color_to_move board) in
   match color with
   |White ->
-    if Game_state.get_square board {rank = k_rank + 1; file = k_file + 1} = (Pawn, Black)
-    then true
-    else if Game_state.get_square board {rank = k_rank + 1; file = k_file - 1} = (Pawn, Black)
-    then true
-    else false
+    let a = if k_rank <= 7 && k_file <= 7 then  Game_state.get_square board {rank = k_rank + 1; file = k_file + 1} = (Pawn, Black)
+      else false in
+    let b = if k_rank <= 7 && k_file >= 2 then  Game_state.get_square board {rank = k_rank + 1; file = k_file - 1} = (Pawn, Black)
+      else false in
+    a||b
   |Black -> 
-    if Game_state.get_square board {rank = k_rank - 1; file = k_file - 1} = (Pawn, White)
-    then true
-    else if Game_state.get_square board {rank = k_rank - 1; file = k_file + 1} = (Pawn, White)
-    then true
-    else false
+    let a = if k_rank >= 2 && k_file >= 2 then  Game_state.get_square board {rank = k_rank - 1; file = k_file - 1} = (Pawn, White)
+      else false in
+    let b = if k_rank >= 2 && k_file >= 2 then  Game_state.get_square board {rank = k_rank - 1; file = k_file + 1} = (Pawn, White)
+      else false in
+    a||b
+
   |NoPiece -> failwith("check from pawn error")
 
 let in_check board king_square = (*check_from_pawn board king_square||*)
@@ -272,6 +273,7 @@ let in_check board king_square = (*check_from_pawn board king_square||*)
     check_down_left_king board king_square || 
     check_up_left_king board king_square ||
     check_up_right_king board king_square ||  *)
+  check_from_pawn board king_square||
   check_from_king board king_square || 
   check_from_knight board king_square ||
   check_below_king board king_square || 
