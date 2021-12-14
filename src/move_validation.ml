@@ -442,7 +442,12 @@ let attempt_move_no_checks_then_promote board start finish piece =
     let board_with_piece_removed =
       Game_state.set_square board_with_updated_en_passant start (Empty, NoPiece)
     in
-    (Game_state.set_square board_with_piece_removed finish the_piece,Game_state.Legal,Game_state.get_square board finish)
+    let final_board = Game_state.set_square board_with_piece_removed finish the_piece in
+    let the_king = Game_state.get_king final_board (Game_state.color_to_move board) in
+    if (not (in_check final_board the_king)) then
+      (final_board,Game_state.Legal,Game_state.get_square board finish)
+    else (board,Game_state.Illegal,(Empty, NoPiece))
+
 
 let attempt_move_no_checks_en_passant board start finish = 
   let the_piece = Game_state.get_square board start in
@@ -454,7 +459,11 @@ let attempt_move_no_checks_en_passant board start finish =
   let board_without_victim =
     Game_state.set_square board_with_attacker_removed {rank=start.rank;file = finish.file} (Empty, NoPiece)
   in
-  (Game_state.set_square board_without_victim finish the_piece,Game_state.Legal,Game_state.get_square board {rank=start.rank;file = finish.file})
+  let final_board = Game_state.set_square board_without_victim finish the_piece in
+  let the_king = Game_state.get_king final_board (Game_state.color_to_move board) in
+  if (not (in_check final_board the_king)) then
+    (final_board,Game_state.Legal,Game_state.get_square board {rank=start.rank;file = finish.file})
+  else (board,Game_state.Illegal,(Empty, NoPiece))
 
 
 
