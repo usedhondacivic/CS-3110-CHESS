@@ -97,48 +97,6 @@ let friendly_fire board start finish =
 
 let pawn_legality board start finish =
   (*white goes up *)
-<<<<<<< HEAD
-  if
-    snd (Game_state.get_square board start) = White
-    && finish.rank < start.rank
-  then false (*Black goes down *)
-  else if
-    snd (Game_state.get_square board start) = Black
-    && finish.rank > start.rank
-  then false (*Can only move by two at start*)
-  else if
-    (finish.rank - start.rank = 2 && start.rank <> 2)
-    || (start.rank - finish.rank = 2 && start.rank <> 7)
-  then false (*Can only move diagonally if theres a piece there*)
-  else if
-    start.file <> finish.file
-    && fst (Game_state.get_square board finish) = Empty
-  then false (*Can't take pieces moving vertically *)
-  else if
-    start.file = finish.file
-    && fst (Game_state.get_square board finish) <> Empty
-  then false
-  else
-    let possible_moves =
-      Piece.get_moves
-        (fst (get_square board start))
-        (start.file, start.rank)
-    in
-    List.exists (equal_tuple (finish.file, finish.rank)) possible_moves
-
-let piece_legality board start finish =
-  (*et moves_list = get_moves (fst (get_square board start))
-    (start.rank,start.finish) in *)
-  if fst (Game_state.get_square board start) = Pawn then
-    pawn_legality board start finish
-  else
-    let possible_moves =
-      Piece.get_moves
-        (fst (get_square board start))
-        (start.file, start.rank)
-    in
-    List.exists (equal_tuple (finish.file, finish.rank)) possible_moves
-=======
   if snd (Game_state.get_square board start) = White && finish.rank<start.rank then false 
   (*Black goes down *)
   else if snd (Game_state.get_square board start) = Black && finish.rank>start.rank then false
@@ -156,7 +114,6 @@ let piece_legality board start finish =
   if  fst (Game_state.get_square board start) = Pawn then pawn_legality board start finish else
     let possible_moves = Piece.get_moves (fst (get_square board start))  (start.file,start.rank) in
     List.exists (equal_tuple (finish.file,finish.rank)) possible_moves
->>>>>>> 23079382db294f6cf9af713914f8ac3bef1cbfa2
 
 let opposite_color color =
   match color with
@@ -168,41 +125,6 @@ let check_from_knight board king_square =
   let k_rank = king_square.rank in
   let k_file = king_square.file in
   let opp_color = opposite_color (Game_state.color_to_move board) in
-<<<<<<< HEAD
-  if
-    Game_state.get_square board { rank = k_rank + 2; file = k_file + 1 }
-    = (Knight, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank + 2; file = k_file - 1 }
-    = (Knight, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank - 2; file = k_file + 1 }
-    = (Knight, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank - 2; file = k_file - 1 }
-    = (Knight, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank + 1; file = k_file + 2 }
-    = (Knight, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank + 1; file = k_file - 2 }
-    = (Knight, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank - 1; file = k_file + 2 }
-    = (Knight, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank - 1; file = k_file - 2 }
-    = (Knight, opp_color)
-  then true
-  else false
-=======
   let a = if k_rank <= 6 && k_file<=7 then Game_state.get_square board {rank = k_rank + 2; file = k_file + 1} = (Knight, opp_color)
     else false in
   let b = if k_rank <= 6 && k_file>=2 then Game_state.get_square board  {rank = k_rank + 2; file = k_file - 1} = (Knight, opp_color)
@@ -220,7 +142,6 @@ let check_from_knight board king_square =
   let h = if k_rank >= 2 && k_file>=3 then Game_state.get_square board  {rank = k_rank - 1; file = k_file - 2} = (Knight, opp_color)
     else false in
   a||b||c||d||e||f||g||h
->>>>>>> 23079382db294f6cf9af713914f8ac3bef1cbfa2
 
 let rec first_non_empty_piece_in_list alist =
   match alist with
@@ -306,16 +227,8 @@ let rec diagonal_end_finder_down_left coord =
 
 let check_up_right_king board king_square =
   let opp_color = opposite_color (Game_state.color_to_move board) in
-<<<<<<< HEAD
-  let threat_piece =
-    first_non_empty_piece_in_list
-      (pieces_in_between_diagonal board king_square
-         (diagonal_end_finder_up_right king_square))
-  in
-=======
   let threat_piece = first_non_empty_piece_in_list (pieces_in_between_diagonal board king_square (diagonal_end_finder_up_right king_square)) in
   (*print_string(piece_string threat_piece);*)
->>>>>>> 23079382db294f6cf9af713914f8ac3bef1cbfa2
   match threat_piece with
   | Queen, c -> if c = opp_color then true else false
   | Bishop, d -> if d = opp_color then true else false
@@ -361,38 +274,6 @@ let check_from_king board king_square =
   let k_rank = king_square.rank in
   let k_file = king_square.file in
   let opp_color = opposite_color (Game_state.color_to_move board) in
-<<<<<<< HEAD
-
-  if
-    Game_state.get_square board { rank = k_rank + 1; file = k_file + 1 }
-    = (King, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank + 1; file = k_file + 0 }
-    = (King, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank + 1; file = k_file - 1 }
-    = (King, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank + 0; file = k_file - 1 }
-    = (King, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank - 1; file = k_file - 1 }
-    = (King, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank - 1; file = k_file + 0 }
-    = (King, opp_color)
-  then true
-  else if
-    Game_state.get_square board { rank = k_rank - 1; file = k_file + 1 }
-    = (King, opp_color)
-  then true
-  else false
-=======
   let a = if k_rank <= 7 && k_file <= 7 then Game_state.get_square board {rank = k_rank + 1; file = k_file + 1} = (King, opp_color)
     else false in
   let b = if k_rank <= 7 && k_file <= 8 then Game_state.get_square board {rank = k_rank + 1; file = k_file + 0} = (King, opp_color)
@@ -410,54 +291,12 @@ let check_from_king board king_square =
   let h = if k_rank <= 8 && k_file <= 7 then Game_state.get_square board {rank = k_rank - 0; file = k_file + 1} = (King, opp_color)
     else false in
   a||b||c||d||e||f||g||h
->>>>>>> 23079382db294f6cf9af713914f8ac3bef1cbfa2
 
 let check_from_pawn board king_square =
   let k_rank = king_square.rank in
   let k_file = king_square.file in
   let color = Game_state.color_to_move board in
   match color with
-<<<<<<< HEAD
-  | White ->
-      if
-        Game_state.get_square board
-          { rank = k_rank + 1; file = k_file + 1 }
-        = (Pawn, Black)
-      then true
-      else if
-        Game_state.get_square board
-          { rank = k_rank + 1; file = k_file - 1 }
-        = (Pawn, Black)
-      then true
-      else false
-  | Black ->
-      if
-        Game_state.get_square board
-          { rank = k_rank - 1; file = k_file - 1 }
-        = (Pawn, White)
-      then true
-      else if
-        Game_state.get_square board
-          { rank = k_rank - 1; file = k_file + 1 }
-        = (Pawn, White)
-      then true
-      else false
-  | NoPiece -> failwith "check from pawn error"
-
-let in_check board king_square =
-  (*check_from_pawn board king_square||*)
-  (*check_from_king board king_square || *)
-  (*check_down_right_king board king_square || check_down_left_king
-    board king_square || check_up_left_king board king_square ||
-    check_up_right_king board king_square ||*)
-  check_below_king board king_square
-  || check_above_king board king_square
-  || check_right_king board king_square
-  || check_left_king board king_square
-
-(*check_from_knight board king_square*)
-let right_color board start =
-=======
   |White ->
     let a = if k_rank <= 7 && k_file <= 7 then  Game_state.get_square board {rank = k_rank + 1; file = k_file + 1} = (Pawn, Black)
       else false in
@@ -486,7 +325,6 @@ let in_check board king_square = (*
   check_right_king board king_square || 
   check_left_king board king_square 
 let right_color board start = 
->>>>>>> 23079382db294f6cf9af713914f8ac3bef1cbfa2
   let the_piece = Game_state.get_square board start in
   snd the_piece = Game_state.color_to_move board
 
@@ -673,44 +511,12 @@ let detect_promotion board start finish =
   || Game_state.get_square board start = (Pawn, Black)
      && finish.rank = 1
 
-<<<<<<< HEAD
-let string_of_piece piece =
-  match piece with
-  | King -> "K"
-  | Queen -> "Q"
-  | Bishop -> "B"
-  | Knight -> "N"
-  | Rook -> "R"
-  | Pawn -> "P"
-  | Empty -> "empty"
-
-let string_of_color color =
-  match color with
-  | White -> "White"
-  | Black -> "Black"
-  | NoPiece -> "NP"
-
-let piece_string a =
-  string_of_piece (fst a) ^ " " ^ string_of_color (snd a)
-
-let en_passant_update_white board start finish =
-  if
-    Game_state.get_square board start = (Pawn, White)
-    && start.rank = 2 && finish.rank = 4
-  then
-    Game_state.set_en_passant_target board
-      (Some { rank = 3; file = finish.file })
-    (* else failwith (piece_string (Game_state.get_square board start) ^
-       "srank: " ^ string_of_int start.rank ^ "frank: " ^ string_of_int
-       finish.rank) *)
-=======
 
 
 let en_passant_update_white board start finish = 
   if  Game_state.get_square board start = (Pawn,White) && start.rank = 2 && finish.rank = 4 
   then Game_state.set_en_passant_target board (Some {rank = 3;file = finish.file})
   (* else failwith (piece_string (Game_state.get_square board start) ^ "srank: " ^ string_of_int start.rank ^ "frank: " ^ string_of_int finish.rank) *)
->>>>>>> 23079382db294f6cf9af713914f8ac3bef1cbfa2
   else Game_state.set_en_passant_target board None
 
 let en_passant_update_black board start finish =
@@ -789,18 +595,12 @@ let attempt_move_no_checks_then_promote board start finish piece =
       Game_state.set_square board_with_updated_en_passant start
         (Empty, NoPiece)
     in
-<<<<<<< HEAD
-    ( Game_state.set_square board_with_piece_removed finish the_piece,
-      Game_state.Legal,
-      Game_state.get_square board finish )
-=======
     let final_board = Game_state.set_square board_with_piece_removed finish the_piece in
     let the_king = Game_state.get_king final_board (Game_state.color_to_move board) in
     if (not (in_check final_board the_king)) then
       (final_board,Game_state.Legal,Game_state.get_square board finish)
     else (board,Game_state.Illegal,(Empty, NoPiece))
 
->>>>>>> 23079382db294f6cf9af713914f8ac3bef1cbfa2
 
 let attempt_move_no_checks_en_passant board start finish =
   let the_piece = Game_state.get_square board start in
@@ -817,12 +617,6 @@ let attempt_move_no_checks_en_passant board start finish =
       { rank = start.rank; file = finish.file }
       (Empty, NoPiece)
   in
-<<<<<<< HEAD
-  ( Game_state.set_square board_without_victim finish the_piece,
-    Game_state.Legal,
-    Game_state.get_square board
-      { rank = start.rank; file = finish.file } )
-=======
   let final_board = Game_state.set_square board_without_victim finish the_piece in
   let the_king = Game_state.get_king final_board (Game_state.color_to_move board) in
   if (not (in_check final_board the_king)) then
@@ -830,7 +624,6 @@ let attempt_move_no_checks_en_passant board start finish =
   else (board,Game_state.Illegal,(Empty, NoPiece))
 
 
->>>>>>> 23079382db294f6cf9af713914f8ac3bef1cbfa2
 
 let rec ask_promotion board =
   print_string
