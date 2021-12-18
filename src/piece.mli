@@ -1,5 +1,5 @@
-(** Representation of static chess piece data. This module represents
-    the possible moves by each chess piece. *)
+(** [Piece] is a representation of static chess piece data. This module
+    represents the possible moves by each chess piece. *)
 
 exception UnknownPiece of Game_state.piece
 (** Raised when an unknown piece is encountered. *)

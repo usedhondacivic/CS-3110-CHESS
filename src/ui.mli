@@ -1,5 +1,5 @@
-(** [Ui] handles displaying the board graphics and various screen in the
-    terminal *)
+(** [Ui] handles displaying the board graphics and various screens in
+    the terminal *)
 
 val update_display : Game_state.game_state -> unit
 (** [update_display] updates the display to show a new board *)

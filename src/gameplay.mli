@@ -1,3 +1,7 @@
+(** [Gameplay] is a collection of methods to handle interaction of the
+    game with its surroundings (player / computer). This includes taking
+    and validating moves and incrementing the clock.*)
+
 type valid = {
   start : Game_state.board_coord;
   next : Game_state.board_coord;
