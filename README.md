@@ -3,7 +3,7 @@ Created for Cornell's CS 3110: Data Structures and Functional Programming, Fall 
 
 Authors: Michael Crum, Nicholas Broussard, Morgan Suh, Zoe De Simone
 
-![The program in action](docs/CONTRIBUTING.md)
+![The program in action](Chess.png)
 
 ## Quick start
 Run the following in Ubuntu:
